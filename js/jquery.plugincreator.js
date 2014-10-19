@@ -7,6 +7,10 @@
  * http://github.com/OOPMan/jquery-plugin-creator/LICENSE
  *
  */
+/**
+ * TODO: Add checks to prevent over-writing plugins
+ * TODO: Add ability to control whether extendPlugin calls parent constructor
+ */
 (function () {
     /**
      *
@@ -25,7 +29,8 @@
                  * @param members
                  */
                 addPlugin: function (name, constructor, defaults, members) {
-                    var defaults = $.extend({}, defaults || {}),
+                    var constructor = constructor || function () {},
+                        defaults = $.extend({}, defaults || {}),
                         members = [$.extend({},members || {})],
                         readonlyMembers = {
                             update: function (options) {
@@ -45,8 +50,8 @@
                         /**
                          *
                          */
-                        function innerConstructor () {
-                            this.element = $(element).addClass("test");
+                        var innerConstructor = function () {
+                            this.element = $(element).addClass(name);
                             this.options = $.extend({}, $.fn[name].defaults, options);
                             constructor.apply(this);
                         };
@@ -85,16 +90,37 @@
                      * @param members
                      * @returns {Number}
                      */
-                    $.fn.test.extend = function(members) {
+                    $.fn[name].extend = function(members) {
                         return members.unshift($.extend({}, members[0], members));
                     };
+                    plugins[name] = {
+                        constructor: constructor,
+                        defaults: defaults,
+                        members: members
+                    };
+                    return name;
                 },
                 /**
                  *
                  * @param name
+                 * @param newName
+                 * @param constructor
+                 * @param defaults
+                 * @param members
                  */
-                extendPlugin: function (name) {
-
+                extendPlugin: function (name, newName, constructor, defaults, members) {
+                    var constructor = constructor || function () {},
+                        defaults = $.extend({}, defaults || {}),
+                        members = [$.extend({},members || {})];
+                    return pluginCreator.addPlugin(
+                        newName,
+                        function() {
+                            plugins[name].constructor.apply(this);
+                            constructor.apply(this);
+                        },
+                        $.extend({}, plugins[name].defaults, defaults),
+                        $.extend({}, plugins[name].members, members)
+                    );
                 }
         };
         return pluginCreator;
