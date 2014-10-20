@@ -10,6 +10,7 @@
 /**
  * TODO: Add checks to prevent over-writing plugins
  * TODO: Add ability to control whether extendPlugin calls parent constructor
+ * TODO: Add ability to not specify plugin name and have a randomly generated name assigned
  */
 (function () {
     /**
@@ -40,13 +41,25 @@
                 addPlugin: function (name, constructor, defaults, members) {
                     var constructor = constructor || function () {},
                         defaults = $.extend({}, defaults || {}),
-                        members = [$.extend({},members || {})],
+                        members = [$.extend({}, members || {})],
                         readonlyMembers = {
+                            /**
+                             *
+                             * @param {Object} options
+                             * @returns {Object}
+                             */
                             update: function (options) {
-                                this.options = $.extend(this.options, options);
+                                $.extend(true, this.options, options);
+                                return this.options;
                             },
+                            /**
+                             *
+                             * @param {Object} members
+                             * @returns {boolean}
+                             */
                             extend: function (members) {
-                                $.extend(this, members, readonlyMembers);
+                                $.extend(true, this, members, readonlyMembers);
+                                return true;
                             }
                         };
 
@@ -54,17 +67,18 @@
                      *
                      * @param {Object} element
                      * @param {Object} options
+                     * @param {Array} constructorArguments
                      */
-                    function init(element, options) {
+                    function init(element, options, constructorArguments) {
                         /**
                          *
                          */
                         var innerConstructor = function () {
                             this.element = $(element).addClass(name);
-                            this.options = $.extend({}, $.fn[name].defaults, options);
-                            constructor.apply(this);
+                            this.options = $.extend(true, {}, $.fn[name].defaults, options);
+                            constructor.apply(this, constructorArguments);
                         };
-                        $.extend(innerConstructor.prototype, members[0], readonlyMembers);
+                        $.extend(true, innerConstructor.prototype, members[0], readonlyMembers);
                         $.data(element, name, new innerConstructor());
                     }
 
@@ -84,8 +98,8 @@
                                 } else if (instance.update) { // call update on the instance
                                     instance.update.apply(instance, args);
                                 }
-                            } else {
-                                init(this, options);
+                            } else if ($.isPlainObject(options)) {
+                                init(this, options, args.slice(1));
                             }
                         })
                     };
@@ -96,15 +110,25 @@
                     $.fn[name].defaults = defaults;
                     /**
                      *
-                     * @param {Object} members
-                     * @returns {number}
+                     * @param {Object} options
+                     * @returns {Object}
                      */
-                    $.fn[name].extend = function(members) {
-                        return members.unshift($.extend({}, members[0], members));
+                    $.fn[name].update = function(options) {
+                        $.extend(true, $.fn[name].defaults, options);
+                        return $.fn[name].defaults;
+                    };
+                    /**
+                     *
+                     * @param {Object} newMembers
+                     * @returns {boolean}
+                     */
+                    $.fn[name].extend = function(newMembers) {
+                        members.unshift($.extend(true, {}, members[0], newMembers));
+                        return true;
                     };
                     plugins[name] = {
                         constructor: constructor,
-                        defaults: defaults,
+                        defaults: $.fn[name].defaults,
                         members: members
                     };
                     return name;
@@ -122,8 +146,8 @@
                     return pluginCreator.addPlugin(
                         newName,
                         plugins[name].constructor,
-                        $.extend({}, plugins[name].defaults),
-                        $.extend({}, plugins[name].members)
+                        $.extend(true, {}, plugins[name].defaults),
+                        $.extend(true, {}, plugins[name].members)
                     );
 
                 },
@@ -143,16 +167,16 @@
                  */
                 extendPlugin: function(name, newName, constructor, defaults, members) {
                     var constructor = constructor || function () {},
-                        defaults = $.extend({}, defaults || {}),
-                        members = [$.extend({},members || {})];
+                        defaults = $.extend(true, {}, defaults || {}),
+                        members = $.extend(true, {}, members || {});
                     return pluginCreator.addPlugin(
                         newName,
                         function() {
-                            plugins[name].constructor.apply(this);
-                            constructor.apply(this);
+                            plugins[name].constructor.apply(this, arguments);
+                            constructor.apply(this, arguments);
                         },
-                        $.extend({}, plugins[name].defaults, defaults),
-                        $.extend({}, plugins[name].members, members)
+                        $.extend(true, {}, plugins[name].defaults, defaults),
+                        $.extend(true, {}, plugins[name].members, members)
                     );
                 }
         };
