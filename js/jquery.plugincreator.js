@@ -74,7 +74,8 @@
                          *
                          */
                         var innerConstructor = function () {
-                            this.element = $(element).addClass(name);
+                            this.element = element;
+                            this.context = $(element).addClass(name);
                             this.options = $.extend(true, {}, $.fn[name].defaults, options);
                             constructor.apply(this, constructorArguments);
                         };
