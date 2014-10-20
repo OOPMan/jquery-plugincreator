@@ -19,14 +19,23 @@
      */
     function pluginCreatorFactory(jQuery) {
         var $ = jQuery,
+            /**
+             *
+             * @type {Object}
+             */
             plugins = {},
+            /**
+             *
+             * @type {{addPlugin: addPlugin, clonePlugin: clonePlugin, extendPlugin: extendPlugin}}
+             */
             pluginCreator = {
                 /**
                  *
-                 * @param name
-                 * @param constructor
-                 * @param defaults
-                 * @param members
+                 * @param {string} name
+                 * @param {function()} [constructor]
+                 * @param {Object} [defaults]
+                 * @param {Object} [members]
+                 * @return {string}
                  */
                 addPlugin: function (name, constructor, defaults, members) {
                     var constructor = constructor || function () {},
@@ -43,8 +52,8 @@
 
                     /**
                      *
-                     * @param element
-                     * @param options
+                     * @param {Object} element
+                     * @param {Object} options
                      */
                     function init(element, options) {
                         /**
@@ -62,8 +71,8 @@
                     // Add Plugin
                     /**
                      *
-                     * @param options
-                     * @returns {*}
+                     * @param {Object|string} options
+                     * @returns {jQuery}
                      */
                     $.fn[name] = function(options) {
                         var args = $.makeArray(arguments);
@@ -87,8 +96,8 @@
                     $.fn[name].defaults = defaults;
                     /**
                      *
-                     * @param members
-                     * @returns {Number}
+                     * @param {Object} members
+                     * @returns {number}
                      */
                     $.fn[name].extend = function(members) {
                         return members.unshift($.extend({}, members[0], members));
@@ -101,14 +110,38 @@
                     return name;
                 },
                 /**
+                 * Clones a plugin added using jQuery PluginCreator.
                  *
-                 * @param name
-                 * @param newName
-                 * @param constructor
-                 * @param defaults
-                 * @param members
+                 * While the defaults and members are cloned completely and are independent, the constructor is shared.
+                 *
+                 * @param {string} name
+                 * @param {string} newName
+                 * @returns {string}
                  */
-                extendPlugin: function (name, newName, constructor, defaults, members) {
+                clonePlugin: function(name, newName) {
+                    return pluginCreator.addPlugin(
+                        newName,
+                        plugins[name].constructor,
+                        $.extend({}, plugins[name].defaults),
+                        $.extend({}, plugins[name].members)
+                    );
+
+                },
+                /**
+                 * Extends a plugin added using jQuery PluginCreator.
+                 *
+                 * Defaults and members are cloned and extended from the original plugin while the extended constructor
+                 * functions such that the constructor for the original plugin is called first, then new new
+                 * constructor, if present.
+                 *
+                 * @param {string} name
+                 * @param {string} newName
+                 * @param {function()} [constructor]
+                 * @param {Object} [defaults]
+                 * @param {Object} [members]
+                 * @return {string}
+                 */
+                extendPlugin: function(name, newName, constructor, defaults, members) {
                     var constructor = constructor || function () {},
                         defaults = $.extend({}, defaults || {}),
                         members = [$.extend({},members || {})];
@@ -127,7 +160,11 @@
     }
     // Export jQuery Plugin Creator
     if (typeof define === "function" && define.amd) {
-        define(["jquery"], pluginCreatorFactory);
+        define(["jquery"], function(jQuery) {
+            var pluginCreator = pluginCreatorFactory(jQuery);
+            jQuery.extend(jQuery, pluginCreator);
+            return pluginCreator;
+        });
     } else if (typeof jQuery !== "undefined")  {
         jQuery.extend(jQuery, pluginCreatorFactory(jQuery));
     } else {
