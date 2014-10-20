@@ -16,6 +16,9 @@
     "utility"
   ],
   "license": "MIT",
+  "dependencies": {
+      "jquery": ">=1.6.0"
+  },
   "ignore": [
     "**/.*",
     "node_modules",
