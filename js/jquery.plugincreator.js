@@ -68,15 +68,14 @@
                 /**
                  * Adds a new stateful plugin to jQuery.
                  *
-                 *
-                 *
                  * @param {string} name
                  * @param {function} [constructor]
                  * @param {Object} [defaults]
                  * @param {Object} [members]
+                 * @param {function} [prototype]
                  * @return {string}
                  */
-                addPlugin: function (name, constructor, defaults, members) {
+                addPlugin: function (name, constructor, defaults, members, prototype) {
                     var constructor = constructor || function () {},
                         defaults = $.extend({}, defaults || {}),
                         members = [$.extend({}, members || {})],
@@ -118,6 +117,7 @@
                             this.options = $.extend(true, {}, $.fn[name].defaults, options);
                             constructor.apply(this, constructorArguments);
                         };
+                        if (prototype) innerConstructor.prototype = prototype();
                         $.extend(true, innerConstructor.prototype, members[0], readonlyMembers);
                         $.data(element, name, new innerConstructor());
                     }
@@ -169,7 +169,8 @@
                     plugins[name] = {
                         constructor: constructor,
                         defaults: $.fn[name].defaults,
-                        members: members
+                        members: members,
+                        prototype: prototype
                     };
                     return name;
                 },
@@ -187,7 +188,8 @@
                         newName,
                         plugins[name].constructor,
                         $.extend(true, {}, plugins[name].defaults),
-                        $.extend(true, {}, plugins[name].members[0])
+                        $.extend(true, {}, plugins[name].members[0]),
+                        plugins[name].prototype
                     );
 
                 },
@@ -216,7 +218,8 @@
                             constructor.apply(this, arguments);
                         },
                         $.extend(true, {}, plugins[name].defaults, defaults),
-                        $.extend(true, {}, plugins[name].members[0], attachSuperFunctions(plugins[name].members[0], members))
+                        $.extend(true, {}, plugins[name].members[0], attachSuperFunctions(plugins[name].members[0], members)),
+                        plugins[name].prototype
                     );
                 }
         };
