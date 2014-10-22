@@ -9,13 +9,47 @@
  */
 /**
  * TODO: Add checks to prevent over-writing plugins
+ * TODO: Add checks to prevent re-instantating plugins
+ * TODO: Add plugin destruction handling
  * TODO: Add ability to control whether extendPlugin calls parent constructor
  * TODO: Add ability to not specify plugin name and have a randomly generated name assigned
  */
 (function () {
     /**
+     * Where a member exists in both hostObject and members, attaches a super function to
+     * the member within members enabling it to call the associated member within hostObject.
      *
-     * @param jQuery
+     * For example:
+     *
+     * hostObject.a = function (text) {
+     *  alert(text);
+     * }
+     *
+     * members.a = function (text) {
+     *  alert(text);
+     *  this.a.super(text);
+     * };
+     *
+     * attachSuperFunctions(hostObject, members);
+     *
+     * @param {Object|function} hostObject
+     * @param {Object} members
+     * @returns {*}
+     */
+    function attachSuperFunctions(hostObject, members) {
+        $.each(members, function (memberName, member) {
+            if ($.isFunction(hostObject[memberName])) {
+                var superMember = hostObject[memberName];
+                member.super = function(thiz) {
+                    return superMember.apply(thiz, arguments);
+                };
+            }
+        });
+        return members;
+    }
+    /**
+     *
+     * @param {jQuery} jQuery
      * @returns {{addPlugin: addPlugin, extendPlugin: extendPlugin}}
      */
     function pluginCreatorFactory(jQuery) {
@@ -58,18 +92,19 @@
                              * @returns {boolean}
                              */
                             extend: function (members) {
-                                $.extend(true, this, members, readonlyMembers);
+                                $.extend(true, this, attachSuperFunctions(this, members), readonlyMembers);
                                 return true;
                             }
                         };
 
                     /**
+                     * This function is used to instantiate an instance of the plugin on a given element.
                      *
                      * @param {Object} element
                      * @param {Object} options
                      * @param {Array} constructorArguments
                      */
-                    function init(element, options, constructorArguments) {
+                    function instantiatePlugin(element, options, constructorArguments) {
                         /**
                          *
                          */
@@ -82,6 +117,8 @@
                         $.extend(true, innerConstructor.prototype, members[0], readonlyMembers);
                         $.data(element, name, new innerConstructor());
                     }
+
+
 
                     // Add Plugin
                     /**
@@ -99,8 +136,8 @@
                                 } else if (instance.update) { // call update on the instance
                                     instance.update.apply(instance, args);
                                 }
-                            } else if ($.isPlainObject(options)) {
-                                init(this, options, args.slice(1));
+                            } else {
+                                instantiatePlugin(this, options, args.slice(1));
                             }
                         })
                     };
@@ -124,7 +161,7 @@
                      * @returns {boolean}
                      */
                     $.fn[name].extend = function(newMembers) {
-                        members.unshift($.extend(true, {}, members[0], newMembers));
+                        members.unshift($.extend(true, {}, members[0], attachSuperFunctions(members[0], newMembers)));
                         return true;
                     };
                     plugins[name] = {
@@ -177,7 +214,7 @@
                             constructor.apply(this, arguments);
                         },
                         $.extend(true, {}, plugins[name].defaults, defaults),
-                        $.extend(true, {}, plugins[name].members, members)
+                        $.extend(true, {}, plugins[name].members, attachSuperFunctions(plugins[name].members, members))
                     );
                 }
         };
