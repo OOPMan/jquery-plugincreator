@@ -14,6 +14,7 @@
  * TODO: Add ability to control whether extendPlugin calls parent constructor
  * TODO: Add ability to not specify plugin name and have a randomly generated name assigned
  */
+"use strict";
 (function () {
     /**
      * Where a member exists in both hostObject and members, attaches a super function to
@@ -27,7 +28,7 @@
      *
      * members.a = function (text) {
      *  alert(text);
-     *  this.a.super(text);
+     *  this.a.super(this, text);
      * };
      *
      * attachSuperFunctions(hostObject, members);
@@ -41,7 +42,7 @@
             if ($.isFunction(hostObject[memberName])) {
                 var superMember = hostObject[memberName];
                 member.super = function(thiz) {
-                    return superMember.apply(thiz, arguments);
+                    return superMember.apply(thiz, $.makeArray(arguments).slice(1));
                 };
             }
         });
@@ -67,7 +68,7 @@
                 /**
                  *
                  * @param {string} name
-                 * @param {function()} [constructor]
+                 * @param {function} [constructor]
                  * @param {Object} [defaults]
                  * @param {Object} [members]
                  * @return {string}
@@ -117,8 +118,6 @@
                         $.extend(true, innerConstructor.prototype, members[0], readonlyMembers);
                         $.data(element, name, new innerConstructor());
                     }
-
-
 
                     // Add Plugin
                     /**
