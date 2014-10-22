@@ -1,0 +1,29 @@
+{
+  "name": "jquery-plugincreator",
+  "version": "0.0.1",
+  "description": "A jQuery add-on that makes creating plugins a little easier.",
+  "main": [
+    "./js/jquery.plugincreator.js"
+  ],
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OOPMan/jquery-plugincreator"
+  },
+  "keywords": [
+    "jquery",
+    "plugin",
+    "utility"
+  ],
+  "author": "Adam Jorgensen <adam.jorgensen.za@gmail.com>",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "unit.js": ">=1.0.2",
+    "mocha": ">=2.0.0",
+    "bower": "~0.8.5",
+    "jquery": ">=1.6.0"
+  }
+}
