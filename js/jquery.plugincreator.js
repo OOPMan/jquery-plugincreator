@@ -68,6 +68,12 @@
                 /**
                  * Adds a new stateful plugin to jQuery.
                  *
+                 * A stateful plugin consists of the following optional components:
+                 * - A constructor function to be executed when the plugin is instantiated on a given element.
+                 * - An object defining default properties to be associated with a plugin instance via its options member
+                 * - An object defining member functions and values to be associated with a plugin instances prototype.
+                 * - A prototype function to be used as the plugin instances prototype when the plugin is instantiate on a given element.
+                 *
                  * @param {string} name
                  * @param {function} [constructor]
                  * @param {Object} [defaults]
