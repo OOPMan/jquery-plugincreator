@@ -66,6 +66,9 @@
              */
             pluginCreator = {
                 /**
+                 * Adds a new stateful plugin to jQuery.
+                 *
+                 *
                  *
                  * @param {string} name
                  * @param {function} [constructor]
@@ -184,7 +187,7 @@
                         newName,
                         plugins[name].constructor,
                         $.extend(true, {}, plugins[name].defaults),
-                        $.extend(true, {}, plugins[name].members)
+                        $.extend(true, {}, plugins[name].members[0])
                     );
 
                 },
@@ -213,7 +216,7 @@
                             constructor.apply(this, arguments);
                         },
                         $.extend(true, {}, plugins[name].defaults, defaults),
-                        $.extend(true, {}, plugins[name].members, attachSuperFunctions(plugins[name].members, members))
+                        $.extend(true, {}, plugins[name].members[0], attachSuperFunctions(plugins[name].members[0], members))
                     );
                 }
         };
