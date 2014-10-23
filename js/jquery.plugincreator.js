@@ -176,7 +176,12 @@
         return pluginCreator;
     }
     // Export jQuery Plugin Creator
-    if (typeof define === "function" && define.amd) {
+    if (typeof module !== "undefined") {
+        var jQuery = require("jquery"),
+            pluginCreator = pluginCreatorFactory(jQuery);
+        jQuery.extend(jQuery, pluginCreator);
+        module.exports = pluginCreator;
+    } else if (typeof define === "function" && define.amd) {
         define(["jquery"], function(jQuery) {
             var pluginCreator = pluginCreatorFactory(jQuery);
             jQuery.extend(jQuery, pluginCreator);
