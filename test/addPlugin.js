@@ -22,6 +22,22 @@ describe("require('pluginCreator')", function () {
                 test.object(jQuery("#unique").data("jquery-plugincreator-test1"));
             });
         });
+        describe("pluginCreator.addPlugin('test2', constructorFunction)", function () {
+            it("should create jQuery.fn.test2", function () {
+                pluginCreator.addPlugin("test2", function () {
+                    this.test2 = true;
+                });
+                test.function(jQuery.fn.test2);
+            });
+        });
+        describe("jQuery('#unique').test2()", function () {
+            it("should instantiate test2 on #unique, calling constructorFunction in the process", function () {
+                test.number(jQuery("#unique").length).is(1);
+                jQuery("#unique").test2();
+                test.object(jQuery("#unique").data("jquery-plugincreator-test2"))
+                        .hasProperty("test2", true);
+            });
+        });
         after(function () {
             window.close();
         });
