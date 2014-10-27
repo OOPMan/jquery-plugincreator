@@ -88,7 +88,7 @@
                                 constructor.apply(this, constructorArguments);
                             };
                         innerConstructor.prototype = new prototypes[0]();
-                        $.data(element, name, new innerConstructor());
+                        $.data(element, "jquery-plugincreator-" + name, new innerConstructor());
                     }
 
                     // Add Plugin
@@ -100,7 +100,7 @@
                     $.fn[name] = function(options) {
                         var args = $.makeArray(arguments);
                         return this.each(function() {
-                            var instance = $.data(this, name);
+                            var instance = $.data(this, "jquery-plugincreator-" + name);
                             if (instance) {
                                 if (typeof options == "string") { // call a method on the instance
                                     instance[options].apply(instance, args.slice(1));
