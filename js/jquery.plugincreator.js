@@ -23,6 +23,7 @@
      */
     function pluginCreatorFactory(jQuery) {
         var $ = jQuery,
+            scopeName = "jquery-plugincreator-",
             /**
              *
              * @type {{addPlugin: addPlugin}}
@@ -85,12 +86,12 @@
                         var options = options || {},
                             innerConstructor = function () {
                                 this.element = element;
-                                this.context = $(element).addClass(name);
+                                this.context = $(element).addClass(scopeName + name);
                                 this.options = $.extend(true, {}, $.fn[name].defaults, options);
                                 constructor.apply(this, constructorArguments);
                             };
                         innerConstructor.prototype = new prototypes[0]();
-                        $.data(element, "jquery-plugincreator-" + name, new innerConstructor());
+                        $.data(element, scopeName + name, new innerConstructor());
                     }
 
                     // Add Plugin
@@ -102,7 +103,7 @@
                     $.fn[name] = function(options) {
                         var args = $.makeArray(arguments);
                         return this.each(function() {
-                            var instance = $.data(this, "jquery-plugincreator-" + name);
+                            var instance = $.data(this, scopeName + name);
                             if (instance) {
                                 if (typeof options == "string") { // call a method on the instance
                                     instance[options].apply(instance, args.slice(1));
