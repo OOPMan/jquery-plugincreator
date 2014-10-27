@@ -4,22 +4,22 @@ var test = require("unit.js"),
 
 describe("require('pluginCreator')", function () {
     common.withTestHtmlIt("should create jQuery.addPlugin", function (errors, window, jQuery, pluginCreator) {
-        describe("pluginCreator.addPlugin('test')", function () {
-            it("should create jQuery.fn.test", function () {
-                pluginCreator.addPlugin("test");
-                test.function(jQuery.fn.test)
-                    .object(jQuery.fn.test.defaults)
-                    .function(jQuery.fn.test.updateDefaultsWith)
-                    .function(jQuery.fn.test.extendMembersWith)
-                    .function(jQuery.fn.test.cloneTo)
-                    .function(jQuery.fn.test.extendTo);
+        describe("pluginCreator.addPlugin('test1')", function () {
+            it("should create jQuery.fn.test1", function () {
+                pluginCreator.addPlugin("test1");
+                test.function(jQuery.fn.test1)
+                    .object(jQuery.fn.test1.defaults)
+                    .function(jQuery.fn.test1.updateDefaultsWith)
+                    .function(jQuery.fn.test1.extendMembersWith)
+                    .function(jQuery.fn.test1.cloneTo)
+                    .function(jQuery.fn.test1.extendTo);
             });
         });
-        describe("jQuery('#unique').test()", function () {
-            it("should instantiate test on #unique", function () {
-                jQuery("#unique").test();
+        describe("jQuery('#unique').test1()", function () {
+            it("should instantiate test1 on #unique", function () {
+                jQuery("#unique").test1();
                 test.number(jQuery("#unique").length).is(1);
-                test.object(jQuery("#unique").data("test"));
+                test.object(jQuery("#unique").data("test1"));
             });
         });
         after(function () {
