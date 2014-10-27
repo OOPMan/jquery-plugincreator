@@ -71,6 +71,21 @@
                                 prototype.prototype = new (this.prototype)();
                                 $.extend(true, prototype.prototype, members, readonlyMembers);
                                 return prototype;
+                            },
+                            /**
+                             * Destructor function, performs the following:
+                             *
+                             * 1: Triggers a scopeName + name + ".destroy" (E.g. "jquery-plugincreator-myPlugin.destroy") event on the jQuery context (I.e. $(this) ) for the plugin instance.
+                             * 2: Removes the scopeName + name (E.g. "jquery-plugincreator-myPlugin") class from the element linked to the plugin instance.
+                             * 3: Removes the scopeName + name (E.g. "jquery-plugincreator-myPlugin") data value from the element linked to the plugin instance.
+                             * 4: Removes the "data-" + scopeName + name (E.g. "data-jquery-plugincreator-myPlugin") attribute from the element linked to the plugin instance.
+                             */
+                            destroy: function () {
+                                this.context
+                                        .trigger(scopeName + name + ".destroy")
+                                        .removeClass(scopeName + name)
+                                        .removeData(scopeName + name)
+                                        .removeAttr("data-" + scopeName + name);
                             }
                         };
                     $.extend(true, prototype.prototype, members, readonlyMembers);
