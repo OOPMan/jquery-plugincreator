@@ -17,9 +17,9 @@ describe("require('pluginCreator')", function () {
         });
         describe("jQuery('#unique').test1()", function () {
             it("should instantiate test1 on #unique", function () {
-                jQuery("#unique").test1();
                 test.number(jQuery("#unique").length).is(1);
-                test.object(jQuery("#unique").data("test1"));
+                jQuery("#unique").test1();
+                test.object(jQuery("#unique").data("jquery-plugincreator-test1"));
             });
         });
         after(function () {
