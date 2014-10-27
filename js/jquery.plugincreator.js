@@ -65,12 +65,14 @@
                              * @param {Object} members
                              * @returns {boolean}
                              */
-                            extend: function (members) {
-                                $.extend(true, this, attachSuperFunctions(this, members), readonlyMembers);
-                                return true;
+                            extend: function (members, prototype) {
+                                var prototype = prototype || function prototype() {};
+                                prototype.prototype = new (this.prototype)();
+                                $.extend(true, prototype.prototype, members, readonlyMembers);
+                                return prototype;
                             }
                         };
-                    $.extend(true, prototype, members, readonlyMembers);
+                    $.extend(true, prototype.prototype, members, readonlyMembers);
 
                     /**
                      * This function is used to instantiate an instance of the plugin on a given element.
@@ -135,7 +137,7 @@
                     $.fn[name].extendMembersWith = function(members, prototype) {
                         var prototype = prototype || function prototype() {};
                         prototype.prototype = new prototypes[0]();
-                        $.extend(true, prototype, members, readonlyMembers);
+                        $.extend(true, prototype.prototype, members, readonlyMembers);
                         prototypes.unshift(prototype);
                         return prototype;
                     };
