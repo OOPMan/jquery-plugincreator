@@ -38,6 +38,21 @@ describe("require('pluginCreator')", function () {
                         .hasProperty("test2", true);
             });
         });
+        describe("pluginCreator.addPlugin('test3', null, defaults)", function () {
+            it("should create jQuery.fn.test3", function () {
+                pluginCreator.addPlugin("test3", null, {test3: true});
+            });
+        });
+        describe("jQuery('#unique').test3()", function () {
+            it("should instantiate test3 on #unique, setting copy defaults to the options member in the process", function () {
+                test.number(jQuery("#unique").length).is(1);
+                jQuery("#unique").test3();
+                test.object(jQuery("#unique").data("jquery-plugincreator-test3"))
+                        .hasProperty("options")
+                    .object(jQuery("#unique").data("jquery-plugincreator-test3").options)
+                        .hasProperty("test3", true);
+            });
+        });
         after(function () {
             window.close();
         });
