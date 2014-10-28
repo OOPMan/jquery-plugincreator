@@ -5,6 +5,7 @@ var test = require("unit.js"),
 describe("require('pluginCreator')", function () {
     common.withTestHtmlIt("should create jQuery.addPlugin", function (errors, window, jQuery, pluginCreator) {
         test.function(jQuery.addPlugin);
+
         describe("jQuery('#unique')", function () {
             it("should contain a single item", function () {
                 var unique = jQuery("#unique");
@@ -27,8 +28,12 @@ describe("require('pluginCreator')", function () {
                         unique.test();
                         test.object(unique.data("jquery-plugincreator-test"));
                     });
-                    after(function () {
+                });
+
+                describe("jQuery('#unique').test('destroy')", function () {
+                    it("should destroy test on #unique", function () {
                         unique.test("destroy");
+                        test.undefined(unique.data("jquery-plugincreator.test"));
                     });
                 });
 
