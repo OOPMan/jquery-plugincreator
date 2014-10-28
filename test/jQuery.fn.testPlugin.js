@@ -6,6 +6,7 @@ describe("jQuery.fn.testPlugin", function () {
     var window = common.getWindow(),
         jQuery = common.getjQuery(window),
         unique = jQuery("#unique"),
+        nonUnique = jQuery(".non-unique"),
         constructor = function () {
             this.constructorCalled = true;
         },
@@ -62,10 +63,15 @@ describe("jQuery.fn.testPlugin", function () {
             test.number(unique.length).is(1);
         });
 
+        it("jQuery('.non-unique') should contain 4 items", function () {
+            test.number(nonUnique.length).is(4);
+        });
+
         it("jQuery.addPlugin('testPlugin', constructor, defaults, members) should create jQuery.fn.testPlugin", function () {
             jQuery.addPlugin("testPlugin", constructor, defaults, members);
             test.function(jQuery.fn.testPlugin)
-                .object(jQuery.fn.testPlugin.defaults).is(defaults)
+                .object(jQuery.fn.testPlugin.defaults)
+                    .is(defaults)
                 .function(jQuery.fn.testPlugin.updateDefaultsWith)
                 .function(jQuery.fn.testPlugin.extendMembersWith)
                 .function(jQuery.fn.testPlugin.cloneTo)
@@ -73,15 +79,42 @@ describe("jQuery.fn.testPlugin", function () {
         });
     });
 
+    describe("jQuery('#unique').testPlugin()", function () {
+        it("should instantiate testPlugin on #unique", function () {
+            unique.testPlugin();
+            test.object(unique.data("jquery-plugincreator-testPlugin"));
+        });
+        it("should copy the contents of `defaults` into the `options` member on the testPlugin instance", function () {
+            test.object(unique.data("jquery-plugincreator-testPlugin").options).is(defaults);
+        });
+        it("should call `constructor` during instantiation and set the `constructorCalled` member to true", function () {
+            test.bool(unique.data("jquery-plugincreator-testPlugin").constructorCalled, true);
+        });
+    });
+
     describe("jQuery.fn.testPlugin.cloneTo('cloneOfTestPlugin')", function () {
         it("should create jQuery.fn.cloneOfTestPlugin", function () {
             jQuery.fn.testPlugin.cloneTo("cloneOfTestPlugin");
             test.function(jQuery.fn.cloneOfTestPlugin)
-                .object(jQuery.fn.cloneOfTestPlugin.defaults).is(defaults)
+                .object(jQuery.fn.cloneOfTestPlugin.defaults)
+                    .is(defaults)
                 .function(jQuery.fn.cloneOfTestPlugin.updateDefaultsWith)
                 .function(jQuery.fn.cloneOfTestPlugin.extendMembersWith)
                 .function(jQuery.fn.cloneOfTestPlugin.cloneTo)
                 .function(jQuery.fn.cloneOfTestPlugin.extendTo);
+        });
+
+        describe("jQuery('#unique').cloneOfTestPlugin()", function () {
+            it("should instantiate cloneOfTestPlugin on #unique", function () {
+                unique.cloneOfTestPlugin();
+                test.object(unique.data("jquery-plugincreator-cloneOfTestPlugin"));
+            });
+            it("should copy the contents of `defaults` into the `options` member on the cloneOfTestPlugin instance", function () {
+                test.object(unique.data("jquery-plugincreator-cloneOfTestPlugin").options).is(defaults);
+            });
+            it("should call `constructor` during instantiation and set the `constructorCalled` member to true", function () {
+                test.bool(unique.data("jquery-plugincreator-cloneOfTestPlugin").constructorCalled, true);
+            });
         });
     });
 
@@ -89,7 +122,8 @@ describe("jQuery.fn.testPlugin", function () {
         it("should create jQuery.fn.childOfTestPlugin", function () {
             jQuery.fn.testPlugin.extendTo("childOfTestPlugin", extendedMembers);
             test.function(jQuery.fn.childOfTestPlugin)
-                .object(jQuery.fn.childOfTestPlugin.defaults).is(defaults)
+                .object(jQuery.fn.childOfTestPlugin.defaults)
+                    .is(defaults)
                 .function(jQuery.fn.childOfTestPlugin.updateDefaultsWith)
                 .function(jQuery.fn.childOfTestPlugin.extendMembersWith)
                 .function(jQuery.fn.childOfTestPlugin.cloneTo)
