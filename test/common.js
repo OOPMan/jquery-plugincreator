@@ -3,31 +3,17 @@ var test = require("unit.js"),
     jsdom = require("jsdom"),
     html = fs.readFileSync(__dirname + "/test.html");
     common = {
-        withTestHtml: function (done) {
-            jsdom.env({
-                html: html,
-                done: function (errors, window) {
-                    global.window = window;
-                    var jQuery = require("jquery"),
-                        pluginCreator = require(__dirname + "/../js/jquery.plugincreator");
-                    test.function(jQuery)
-                        .object(pluginCreator)
-                        .function(jQuery.addPlugin)
-                        .function(pluginCreator.addPlugin)
-                        .is(jQuery.addPlugin);
-                    done(errors, window, jQuery, pluginCreator);
-                }
-            });
+        getDocument: function () {
+            return jsdom.jsdom(html);
         },
-        withTestHtmlDescribe: function (description, done) {
-            describe(description, function() {
-                common.withTestHtml(done);
-            });
+        getWindow: function (document) {
+            return document ? document.parentWindow : common.getDocument().parentWindow;
         },
-        withTestHtmlIt: function (description, done) {
-            it(description, function () {
-                common.withTestHtml(done);
-            });
+        getjQuery: function (window) {
+            var window = window || common.getWindow(),
+                jQuery = require("jquery")(window),
+                pluginCreator = require(__dirname + "/../js/jquery.plugincreator.js")(jQuery);
+            return jQuery;
         }
     };
 
