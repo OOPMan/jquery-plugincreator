@@ -194,18 +194,27 @@
         return pluginCreator;
     }
     // Export jQuery Plugin Creator
-    if (typeof module !== "undefined") {
-        var jQuery = require("jquery"),
-            pluginCreator = pluginCreatorFactory(jQuery);
-        jQuery.extend(jQuery, pluginCreator);
-        module.exports = pluginCreator;
-    } else if (typeof define === "function" && define.amd) {
+    if (typeof module !== "undefined") { // CommonJS
+        var factory = function (jQuery) {
+            var pluginCreator = pluginCreatorFactory(jQuery);
+            jQuery.extend(jQuery, pluginCreator);
+            return pluginCreator;
+        };
+        if (global.document) {
+            module.exports = factory(require("jquery"));
+        } else if (global.window) {
+            module.exports = factory(require("jquery")(global.window));
+        } else {
+            module.exports = factory;
+
+        }
+    } else if (typeof define === "function" && define.amd) { // AMD Loader
         define(["jquery"], function(jQuery) {
             var pluginCreator = pluginCreatorFactory(jQuery);
             jQuery.extend(jQuery, pluginCreator);
             return pluginCreator;
         });
-    } else if (typeof jQuery !== "undefined")  {
+    } else if (typeof jQuery !== "undefined")  { // Global Browser Environment
         jQuery.extend(jQuery, pluginCreatorFactory(jQuery));
     } else {
         throw "jQuery not defined";
