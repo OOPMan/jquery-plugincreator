@@ -54,7 +54,7 @@ describe("jQuery.fn.testPlugin", function () {
         it("jQuery.addPlugin('testPlugin', constructor, defaults, members) should create jQuery.fn.testPlugin", function () {
             jQuery.addPlugin("testPlugin", constructor, defaults, members);
             test.function(jQuery.fn.testPlugin)
-                .object(jQuery.fn.testPlugin.defaults)
+                .object(jQuery.fn.testPlugin.defaults).is(defaults)
                 .function(jQuery.fn.testPlugin.updateDefaultsWith)
                 .function(jQuery.fn.testPlugin.extendMembersWith)
                 .function(jQuery.fn.testPlugin.cloneTo)
