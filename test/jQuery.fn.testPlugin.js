@@ -40,6 +40,17 @@ describe("jQuery.fn.testPlugin", function () {
             getTestString: function () {
                 return this._getOption("testString");
             }
+        },
+        extendedMembers = {
+            setTestNumber: function (value) {
+                if (typeof value == "number") this._setOption("testNumber", -value);
+            },
+            setTestBoolean: function (value) {
+                if (typeof value == "boolean") this._setOption("testBoolean", !value);
+            },
+            setTestString: function (value) {
+                this.prototype.setTestString(value + value);
+            }
         };
 
     describe("Pre-flight checks", function () {
@@ -59,6 +70,30 @@ describe("jQuery.fn.testPlugin", function () {
                 .function(jQuery.fn.testPlugin.extendMembersWith)
                 .function(jQuery.fn.testPlugin.cloneTo)
                 .function(jQuery.fn.testPlugin.extendTo);
+        });
+    });
+
+    describe("jQuery.fn.testPlugin.cloneTo('cloneOfTestPlugin')", function () {
+        it("should create jQuery.fn.cloneOfTestPlugin", function () {
+            jQuery.fn.testPlugin.cloneTo("cloneOfTestPlugin");
+            test.function(jQuery.fn.cloneOfTestPlugin)
+                .object(jQuery.fn.cloneOfTestPlugin.defaults).is(defaults)
+                .function(jQuery.fn.cloneOfTestPlugin.updateDefaultsWith)
+                .function(jQuery.fn.cloneOfTestPlugin.extendMembersWith)
+                .function(jQuery.fn.cloneOfTestPlugin.cloneTo)
+                .function(jQuery.fn.cloneOfTestPlugin.extendTo);
+        });
+    });
+
+    describe("jQuery.fn.testPlugin.extendTo('childOfTestPlugin', extendedMembers)", function () {
+        it("should create jQuery.fn.childOfTestPlugin", function () {
+            jQuery.fn.testPlugin.extendTo("childOfTestPlugin", extendedMembers);
+            test.function(jQuery.fn.childOfTestPlugin)
+                .object(jQuery.fn.childOfTestPlugin.defaults).is(defaults)
+                .function(jQuery.fn.childOfTestPlugin.updateDefaultsWith)
+                .function(jQuery.fn.childOfTestPlugin.extendMembersWith)
+                .function(jQuery.fn.childOfTestPlugin.cloneTo)
+                .function(jQuery.fn.childOfTestPlugin.extendTo);
         });
     });
 
