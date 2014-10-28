@@ -184,7 +184,6 @@
                      * @return {string}
                      */
                      $.fn[name].extendTo = function (newName, members, prototype) {
-                        var prototype = prototype || function () {};
                         $.fn[name].cloneTo(newName);
                         $.fn[newName].extendMembersWith(members, prototype);
                      };
