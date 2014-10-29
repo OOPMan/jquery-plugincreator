@@ -20,18 +20,18 @@ describe("jQuery.fn.testPlugin", function () {
             _setOption: function (option, value) {
                 this.options[option] = value;
             },
-            _getOption: function (option) {
-                return this.options[option];
-            },
             setTestNumber: function (value) {
                 if (typeof value == "number") this._setOption("testNumber", value);
+                else throw value + " is not a number";
             },
             setTestBoolean: function (value) {
                 if (typeof value == "boolean") this._setOption("testBoolean", value);
+                else throw value + " is not a boolean";
             },
             setTestString: function (value) {
                 if (typeof value == "string") this._setOption("testString", value);
-            },
+                else throw value + " is not a string";
+            }
         },
         extendedMembers = {
             setTestNumber: function (value) {
@@ -81,6 +81,57 @@ describe("jQuery.fn.testPlugin", function () {
         });
         it("should call `constructor` during instantiation and set the `constructorCalled` member to true", function () {
             test.bool(this.instance.constructorCalled, true);
+        });
+
+        describe("jQuery('#unique').testPlugin('setTestNumber', 321)", function () {
+            it("should call `setTestNumber` on the testPlugin instance", function () {
+                unique.testPlugin("setTestNumber", 321);
+            });
+            it("should set the `testNumber` key in the `options` member on the testPlugin instance to 321", function () {
+                test.number(this.instance.options.testNumber).is(321);
+            });
+        });
+
+        describe("jQuery('#unique').testPlugin('setTestNumber', 'a string')", function () {
+            it("should trigger an exception when trying to call `setTestNumber` on the testPlugin instance", function () {
+                test.exception(function () {
+                    unique.testPlugin("setTestNumber", "a string");
+                });
+            });
+        });
+
+        describe("jQuery('#unique').testPlugin('setTestBoolean', false)", function () {
+            it("should call `setTestBoolean` on the testPlugin instance", function () {
+                unique.testPlugin("setTestBoolean", false);
+            });
+            it("should set the `testBoolean` key in the `options` member on the testPlugin instance to false", function () {
+                test.bool(this.instance.options.testBoolean).isFalse();
+            });
+        });
+
+        describe("jQuery('#unique').testPlugin('setTestBoolean', 'a string')", function () {
+            it("should trigger an exception when trying to call `setTestBoolean` on the testPlugin instance", function () {
+                test.exception(function () {
+                    unique.testPlugin("setTestBoolean", "a string");
+                });
+            });
+        });
+
+        describe("jQuery('#unique').testPlugin('setTestString', 'Hello World')", function () {
+            it("should call `setTestString` on the testPlugin instance", function () {
+                unique.testPlugin("setTestString", "Hello World");
+            });
+            it("should set the `testBoolean` key in the `options` member on the testPlugin instance to 'Hello World'", function () {
+                test.string(this.instance.options.testString).is("Hello World");
+            });
+        });
+
+        describe("jQuery('#unique').testPlugin('setTestString', 321)", function () {
+            it("should trigger an exception when trying to call `setTestString` on the testPlugin instance", function () {
+                test.exception(function () {
+                    unique.testPlugin("setTestString", 321);
+                });
+            });
         });
     });
 
