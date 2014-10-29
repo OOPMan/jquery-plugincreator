@@ -26,21 +26,12 @@ describe("jQuery.fn.testPlugin", function () {
             setTestNumber: function (value) {
                 if (typeof value == "number") this._setOption("testNumber", value);
             },
-            getTestNumber: function () {
-                return this._getOption("testNumber");
-            },
             setTestBoolean: function (value) {
                 if (typeof value == "boolean") this._setOption("testBoolean", value);
-            },
-            getTestBoolean: function () {
-                return this._getOption("testBoolean");
             },
             setTestString: function (value) {
                 if (typeof value == "string") this._setOption("testString", value);
             },
-            getTestString: function () {
-                return this._getOption("testString");
-            }
         },
         extendedMembers = {
             setTestNumber: function (value) {
@@ -82,13 +73,14 @@ describe("jQuery.fn.testPlugin", function () {
     describe("jQuery('#unique').testPlugin()", function () {
         it("should instantiate testPlugin on #unique", function () {
             unique.testPlugin();
-            test.object(unique.data("jquery-plugincreator-testPlugin"));
+            this.instance = unique.data("jquery-plugincreator-testPlugin");
+            test.object(this.instance);
         });
         it("should copy the contents of `defaults` into the `options` member on the testPlugin instance", function () {
-            test.object(unique.data("jquery-plugincreator-testPlugin").options).is(defaults);
+            test.object(this.instance.options).is(defaults);
         });
         it("should call `constructor` during instantiation and set the `constructorCalled` member to true", function () {
-            test.bool(unique.data("jquery-plugincreator-testPlugin").constructorCalled, true);
+            test.bool(this.instance.constructorCalled, true);
         });
     });
 
@@ -107,13 +99,14 @@ describe("jQuery.fn.testPlugin", function () {
         describe("jQuery('#unique').cloneOfTestPlugin()", function () {
             it("should instantiate cloneOfTestPlugin on #unique", function () {
                 unique.cloneOfTestPlugin();
-                test.object(unique.data("jquery-plugincreator-cloneOfTestPlugin"));
+                this.instance = unique.data("jquery-plugincreator-cloneOfTestPlugin");
+                test.object(this.instance);
             });
             it("should copy the contents of `defaults` into the `options` member on the cloneOfTestPlugin instance", function () {
-                test.object(unique.data("jquery-plugincreator-cloneOfTestPlugin").options).is(defaults);
+                test.object(this.instance.options).is(defaults);
             });
             it("should call `constructor` during instantiation and set the `constructorCalled` member to true", function () {
-                test.bool(unique.data("jquery-plugincreator-cloneOfTestPlugin").constructorCalled, true);
+                test.bool(this.instance.constructorCalled, true);
             });
         });
     });
