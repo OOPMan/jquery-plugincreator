@@ -7,16 +7,16 @@ describe("jQuery.fn.testPlugin", function () {
         jQuery = common.getjQuery(window),
         unique = jQuery("#unique"),
         nonUnique = jQuery(".non-unique"),
-        constructor = function () {
-            this.constructorCalled = true;
-        },
         defaults = {
             testNumber: 123,
             testBoolean: true,
             testString: "A string"
         },
         members = {
-            constructorCalled: false,
+            initCalled: false,
+            _init: function () {
+                this.initCalled = true;
+            },
             _setOption: function (option, value) {
                 this.options[option] = value;
             },
@@ -33,15 +33,22 @@ describe("jQuery.fn.testPlugin", function () {
                 else throw value + " is not a string";
             }
         },
-        extendedMembers = {
+        childMembers = {
             setTestNumber: function (value) {
                 if (typeof value == "number") this._setOption("testNumber", -value);
+                else throw value + " is not a number";
             },
             setTestBoolean: function (value) {
                 if (typeof value == "boolean") this._setOption("testBoolean", !value);
+                else throw value + " is not a boolean";
             },
-            setTestString: function (value) {
-                this.prototype.setTestString(value + value);
+            setTestString: function (value, _super) {
+                _super(value + value);
+            }
+        },
+        grandchildMembers = {
+            setTestString: function (value, _super) {
+                _super(value + value);
             }
         };
 
@@ -58,8 +65,8 @@ describe("jQuery.fn.testPlugin", function () {
             test.number(nonUnique.length).is(4);
         });
 
-        it("jQuery.addPlugin('testPlugin', constructor, defaults, members) should create jQuery.fn.testPlugin", function () {
-            jQuery.addPlugin("testPlugin", constructor, defaults, members);
+        it("jQuery.addPlugin('testPlugin', defaults, members) should create jQuery.fn.testPlugin", function () {
+            jQuery.addPlugin("testPlugin", defaults, members);
             test.function(jQuery.fn.testPlugin)
                 .object(jQuery.fn.testPlugin.defaults)
                     .is(defaults)
@@ -79,8 +86,8 @@ describe("jQuery.fn.testPlugin", function () {
         it("should copy the contents of `defaults` into the `options` member on the testPlugin instance", function () {
             test.object(this.instance.options).is(defaults);
         });
-        it("should call `constructor` during instantiation and set the `constructorCalled` member to true", function () {
-            test.bool(this.instance.constructorCalled, true);
+        it("should call `constructor` during instantiation and set the `initCalled` member to true", function () {
+            test.bool(this.instance.initCalled, true);
         });
 
         describe("jQuery('#unique').testPlugin('setTestNumber', 321)", function () {
@@ -156,8 +163,8 @@ describe("jQuery.fn.testPlugin", function () {
             it("should copy the contents of `defaults` into the `options` member on the cloneOfTestPlugin instance", function () {
                 test.object(this.instance.options).is(defaults);
             });
-            it("should call `constructor` during instantiation and set the `constructorCalled` member to true", function () {
-                test.bool(this.instance.constructorCalled, true);
+            it("should call `constructor` during instantiation and set the `initCalled` member to true", function () {
+                test.bool(this.instance.initCalled, true);
             });
 
             describe("jQuery('#unique').cloneOfTestPlugin('setTestNumber', 321)", function () {
@@ -213,9 +220,9 @@ describe("jQuery.fn.testPlugin", function () {
         });
     });
 
-    describe("jQuery.fn.testPlugin.extendTo('childOfTestPlugin', extendedMembers)", function () {
+    describe("jQuery.fn.testPlugin.extendTo('childOfTestPlugin', childMembers)", function () {
         it("should create jQuery.fn.childOfTestPlugin", function () {
-            jQuery.fn.testPlugin.extendTo("childOfTestPlugin", extendedMembers);
+            jQuery.fn.testPlugin.extendTo("childOfTestPlugin", childMembers);
             test.function(jQuery.fn.childOfTestPlugin)
                 .object(jQuery.fn.childOfTestPlugin.defaults)
                     .is(defaults)
@@ -223,6 +230,72 @@ describe("jQuery.fn.testPlugin", function () {
                 .function(jQuery.fn.childOfTestPlugin.extendMembersWith)
                 .function(jQuery.fn.childOfTestPlugin.cloneTo)
                 .function(jQuery.fn.childOfTestPlugin.extendTo);
+        });
+
+        describe("jQuery('#unique').childOfTestPlugin()", function () {
+            it("should instantiate childOfTestPlugin on #unique", function () {
+                unique.childOfTestPlugin();
+                this.instance = unique.data("jquery-plugincreator-childOfTestPlugin");
+                test.object(this.instance);
+            });
+            it("should copy the contents of `defaults` into the `options` member on the childOfTestPlugin instance", function () {
+                test.object(this.instance.options).is(defaults);
+            });
+            it("should call `constructor` during instantiation and set the `initCalled` member to true", function () {
+                test.bool(this.instance.initCalled, true);
+            });
+
+            describe("jQuery('#unique').childOfTestPlugin('setTestNumber', 321)", function () {
+                it("should call `setTestNumber` on the childOfTestPlugin instance", function () {
+                    unique.childOfTestPlugin("setTestNumber", 321);
+                });
+                it("should set the `testNumber` key in the `options` member on the childOfTestPlugin instance to -321", function () {
+                    test.number(this.instance.options.testNumber).is(-321);
+                });
+            });
+
+            describe("jQuery('#unique').childOfTestPlugin('setTestNumber', 'a string')", function () {
+                it("should trigger an exception when trying to call `setTestNumber` on the childOfTestPlugin instance", function () {
+                    test.exception(function () {
+                        unique.childOfTestPlugin("setTestNumber", "a string");
+                    });
+                });
+            });
+
+            describe("jQuery('#unique').childOfTestPlugin('setTestBoolean', false)", function () {
+                it("should call `setTestBoolean` on the childOfTestPlugin instance", function () {
+                    unique.childOfTestPlugin("setTestBoolean", false);
+                });
+                it("should set the `testBoolean` key in the `options` member on the childOfTestPlugin instance to true", function () {
+                    test.bool(this.instance.options.testBoolean).isTrue();
+                });
+            });
+
+            describe("jQuery('#unique').childOfTestPlugin('setTestBoolean', 'a string')", function () {
+                it("should trigger an exception when trying to call `setTestBoolean` on the childOfTestPlugin instance", function () {
+                    test.exception(function () {
+                        unique.childOfTestPlugin("setTestBoolean", "a string");
+                    });
+                });
+            });
+
+            describe("jQuery('#unique').childOfTestPlugin('setTestString', 'Hello World')", function () {
+                var testString = "Hello World";
+                it("should call `setTestString` on the childOfTestPlugin instance", function () {
+                    unique.childOfTestPlugin("setTestString", testString);
+                });
+                it("should set the `testString` key in the `options` member on the childOfTestPlugin instance to 'Hello World'", function () {
+                    test.string(this.instance.options.testString).is(testString + testString);
+                });
+            });
+
+            describe("jQuery('#unique').childOfTestPlugin('setTestString', 321)", function () {
+                it("should trigger an exception when trying to call `setTestString` on the childOfTestPlugin instance", function () {
+                    test.exception(function () {
+                        unique.childOfTestPlugin("setTestString", 321);
+                    });
+                });
+            });
         });
     });
 

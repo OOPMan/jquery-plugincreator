@@ -43,31 +43,9 @@ describe("jQuery.addPlugin", function () {
         });
     });
 
-    describe("jQuery.addPlugin('testPlugin', constructorFunction)", function () {
+    describe("jQuery.addPlugin('testPlugin', defaults)", function () {
         it("should create jQuery.fn.testPlugin", function () {
-            jQuery.addPlugin("testPlugin", function () {
-                this.test = true;
-            });
-            test.function(jQuery.fn.testPlugin);
-        });
-
-        describe("jQuery('#unique').testPlugin()", function () {
-            it("should instantiate testPlugin on #unique", function () {
-                unique.testPlugin();
-            });
-            it("should call `constructorFunction` during instantiation", function () {
-                test.object(unique.data("jquery-plugincreator-testPlugin"))
-                    .hasProperty("test", true);
-            });
-            after(function () {
-                unique.testPlugin("destroy");
-            });
-        });
-    });
-
-    describe("jQuery.addPlugin('testPlugin', null, defaults)", function () {
-        it("should create jQuery.fn.testPlugin", function () {
-            jQuery.addPlugin("testPlugin", null, {
+            jQuery.addPlugin("testPlugin", {
                 test: true
             });
             test.function(jQuery.fn.testPlugin);
@@ -90,9 +68,12 @@ describe("jQuery.addPlugin", function () {
         });
     });
 
-    describe("jQuery.addPlugin('testPlugin', null, null, members)", function () {
+    describe("jQuery.addPlugin('testPlugin', null, members)", function () {
         it("should create jQuery.fn.testPlugin", function () {
-            jQuery.addPlugin("testPlugin", null, null, {
+            jQuery.addPlugin("testPlugin", null, {
+                _init: function () {
+                    this.initCalled = true;
+                },
                 testValue: true,
                 testFunction1: function () {
                     this.testFunctionResult = true;
@@ -107,13 +88,17 @@ describe("jQuery.addPlugin", function () {
         describe("jQuery('#unique').testPlugin()", function () {
             it("should instantiate testPlugin on #unique", function () {
                 unique.testPlugin();
+                this.instance = unique.data("jquery-plugincreator-testPlugin");
             });
             it("should make `members` available to the instance via the prototype", function () {
-                var instance = unique.data("jquery-plugincreator-testPlugin");
-                test.object(instance)
-                    .hasProperty("testValue", true)
-                    .function(instance.testFunction1)
-                    .function(instance.testFunction2);
+                test.object(this.instance)
+                        .hasProperty("testValue", true)
+                    .function(this.instance.testFunction1)
+                    .function(this.instance.testFunction2);
+            });
+            it("should call the `_init` member on the instance if it exists", function () {
+                test.object(this.instance)
+                        .hasProperty("initCalled", true);
             });
         });
 
@@ -122,7 +107,7 @@ describe("jQuery.addPlugin", function () {
                 var instance = unique.data("jquery-plugincreator-testPlugin");
                 unique.testPlugin("testFunction1");
                 test.object(instance)
-                    .hasProperty("testFunctionResult", true);
+                        .hasProperty("testFunctionResult", true);
             });
         });
 
@@ -131,29 +116,7 @@ describe("jQuery.addPlugin", function () {
                 var instance = unique.data("jquery-plugincreator-testPlugin");
                 unique.testPlugin("testFunction2", "someValue");
                 test.object(instance)
-                    .hasProperty("testFunctionResult", "someValue");
-            });
-            after(function () {
-                unique.testPlugin("destroy");
-            });
-        });
-    });
-
-    describe("jQuery.addPlugin('testPlugin', null, null, null, prototypeFunction)", function () {
-        it("should create jQuery.fn.testPlugin", function () {
-            jQuery.addPlugin("testPlugin", null, null, null, function () {
-                this.testValue = true;
-            });
-        });
-
-        describe("jQuery('#unique').testPlugin()", function () {
-            it("should instantiate testPlugin on #unique", function () {
-                unique.testPlugin();
-            });
-            it("should set `testValue` on the instance to `true` as a result executing the prototype function", function () {
-                var instance = unique.data("jquery-plugincreator-testPlugin");
-                test.object(instance)
-                    .hasProperty("testValue", true);
+                        .hasProperty("testFunctionResult", "someValue");
             });
             after(function () {
                 unique.testPlugin("destroy");
