@@ -72,44 +72,6 @@
                 }
                 return childMembers;
             },
-            baseMembers = {
-                /**
-                 * Default init function. Does nothing.
-                 */
-                init: noOp,
-                /**
-                 *
-                 * @param {Object} [options]
-                 * @returns {Object}
-                 */
-                update: function (options) {
-                    $.extend(true, this.options, options || {});
-                    return this.options;
-                },
-                /**
-                 *
-                 * @param {Object} members
-                 * @returns {boolean}
-                 */
-                extend: function (members) {
-                    $.extend(true, this, wrapParents(members, this, this));
-                },
-                /**
-                 * Destructor function, performs the following:
-                 *
-                 * 1: Triggers a scopeName + name + ".destroy" (E.g. "jquery-plugincreator-myPlugin.destroy") event on the jQuery context (I.e. $(this) ) for the plugin instance.
-                 * 2: Removes the scopeName + name (E.g. "jquery-plugincreator-myPlugin") class from the element linked to the plugin instance.
-                 * 3: Removes the scopeName + name (E.g. "jquery-plugincreator-myPlugin") data value from the element linked to the plugin instance.
-                 * 4: Removes the "data-" + scopeName + name (E.g. "data-jquery-plugincreator-myPlugin") attribute from the element linked to the plugin instance.
-                 */
-                destroy: function () {
-                    this.context
-                        .trigger(scopeName + name + ".destroy")
-                        .removeClass(scopeName + name)
-                        .removeData(scopeName + name)
-                        .removeAttr("data-" + scopeName + name);
-                }
-            },
             /**
              *
              * @type {{addPlugin: addPlugin}}
@@ -131,6 +93,44 @@
                  */
                 addPlugin: function (name, defaults, members) {
                     var defaults = $.extend(true, {}, defaults || {}),
+                        baseMembers = {
+                            /**
+                             * Default init function. Does nothing.
+                             */
+                            init: noOp,
+                            /**
+                             *
+                             * @param {Object} [options]
+                             * @returns {Object}
+                             */
+                            update: function (options) {
+                                $.extend(true, this.options, options || {});
+                                return this.options;
+                            },
+                            /**
+                             *
+                             * @param {Object} members
+                             * @returns {boolean}
+                             */
+                            extend: function (members) {
+                                $.extend(true, this, wrapParents(members, this, this));
+                            },
+                            /**
+                             * Destructor function, performs the following:
+                             *
+                             * 1: Triggers a scopeName + name + ".destroy" (E.g. "jquery-plugincreator-myPlugin.destroy") event on the jQuery context (I.e. $(this) ) for the plugin instance.
+                             * 2: Removes the scopeName + name (E.g. "jquery-plugincreator-myPlugin") class from the element linked to the plugin instance.
+                             * 3: Removes the scopeName + name (E.g. "jquery-plugincreator-myPlugin") data value from the element linked to the plugin instance.
+                             * 4: Removes the "data-" + scopeName + name (E.g. "data-jquery-plugincreator-myPlugin") attribute from the element linked to the plugin instance.
+                             */
+                            destroy: function () {
+                                this.context
+                                    .trigger(scopeName + name + ".destroy")
+                                    .removeClass(scopeName + name)
+                                    .removeData(scopeName + name)
+                                    .removeAttr("data-" + scopeName + name);
+                            }
+                        },
                         members = $.isArray(members) ? members : [wrapParents(members, wrapParents(baseMembers, baseMembers))];
 
                     /**
