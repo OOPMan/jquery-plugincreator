@@ -71,7 +71,7 @@ describe("jQuery.addPlugin", function () {
     describe("jQuery.addPlugin('testPlugin', null, members)", function () {
         it("should create jQuery.fn.testPlugin", function () {
             jQuery.addPlugin("testPlugin", null, {
-                _init: function () {
+                init: function () {
                     this.initCalled = true;
                 },
                 testValue: true,
