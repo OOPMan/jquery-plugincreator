@@ -299,6 +299,85 @@ describe("jQuery.fn.testPlugin", function () {
         });
     });
 
+    describe("jQuery.fn.childOfTestPlugin.extendTo('grandchildOfTestPlugin', grandchildMembers)", function () {
+        it("should create jQuery.fn.grandchildOfTestPlugin", function () {
+            jQuery.fn.childOfTestPlugin.extendTo("grandchildOfTestPlugin", grandchildMembers);
+            test.function(jQuery.fn.grandchildOfTestPlugin)
+                .object(jQuery.fn.grandchildOfTestPlugin.defaults)
+                    .is(defaults)
+                .function(jQuery.fn.grandchildOfTestPlugin.updateDefaultsWith)
+                .function(jQuery.fn.grandchildOfTestPlugin.extendMembersWith)
+                .function(jQuery.fn.grandchildOfTestPlugin.cloneTo)
+                .function(jQuery.fn.grandchildOfTestPlugin.extendTo);
+        });
+
+        describe("jQuery('#unique').grandchildOfTestPlugin()", function () {
+            it("should instantiate grandchildOfTestPlugin on #unique", function () {
+                unique.grandchildOfTestPlugin();
+                this.instance = unique.data("jquery-plugincreator-grandchildOfTestPlugin");
+                test.object(this.instance);
+            });
+            it("should copy the contents of `defaults` into the `options` member on the grandchildOfTestPlugin instance", function () {
+                test.object(this.instance.options).is(defaults);
+            });
+            it("should call `constructor` during instantiation and set the `initCalled` member to true", function () {
+                test.bool(this.instance.initCalled, true);
+            });
+
+            describe("jQuery('#unique').grandchildOfTestPlugin('setTestNumber', 321)", function () {
+                it("should call `setTestNumber` on the grandchildOfTestPlugin instance", function () {
+                    unique.grandchildOfTestPlugin("setTestNumber", 321);
+                });
+                it("should set the `testNumber` key in the `options` member on the grandchildOfTestPlugin instance to -321", function () {
+                    test.number(this.instance.options.testNumber).is(-321);
+                });
+            });
+
+            describe("jQuery('#unique').grandchildOfTestPlugin('setTestNumber', 'a string')", function () {
+                it("should trigger an exception when trying to call `setTestNumber` on the grandchildOfTestPlugin instance", function () {
+                    test.exception(function () {
+                        unique.grandchildOfTestPlugin("setTestNumber", "a string");
+                    });
+                });
+            });
+
+            describe("jQuery('#unique').grandchildOfTestPlugin('setTestBoolean', false)", function () {
+                it("should call `setTestBoolean` on the grandchildOfTestPlugin instance", function () {
+                    unique.grandchildOfTestPlugin("setTestBoolean", false);
+                });
+                it("should set the `testBoolean` key in the `options` member on the grandchildOfTestPlugin instance to true", function () {
+                    test.bool(this.instance.options.testBoolean).isTrue();
+                });
+            });
+
+            describe("jQuery('#unique').grandchildOfTestPlugin('setTestBoolean', 'a string')", function () {
+                it("should trigger an exception when trying to call `setTestBoolean` on the grandchildOfTestPlugin instance", function () {
+                    test.exception(function () {
+                        unique.grandchildOfTestPlugin("setTestBoolean", "a string");
+                    });
+                });
+            });
+
+            describe("jQuery('#unique').grandchildOfTestPlugin('setTestString', 'Hello World')", function () {
+                var testString = "Hello World";
+                it("should call `setTestString` on the grandchildOfTestPlugin instance", function () {
+                    unique.grandchildOfTestPlugin("setTestString", testString);
+                });
+                it("should set the `testString` key in the `options` member on the grandchildOfTestPlugin instance to 'Hello WorldHello WorldHello WorldHello World'", function () {
+                    test.string(this.instance.options.testString).is(testString + testString + testString + testString);
+                });
+            });
+
+            describe("jQuery('#unique').grandchildOfTestPlugin('setTestString', 321)", function () {
+                it("should trigger an exception when trying to call `setTestString` on the grandchildOfTestPlugin instance", function () {
+                    test.exception(function () {
+                        unique.grandchildOfTestPlugin("setTestString", 321);
+                    });
+                });
+            });
+        });
+    });
+
     after(function () {
         window.close();
     });
