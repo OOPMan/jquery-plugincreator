@@ -36,14 +36,16 @@
              * @returns {function}
              */
             parentWrapper = function (childMember, parentMember) {
-                var parentMember = parentMember == childMember ? noOp : parentMember;
+                var parentMember = (parentMember == childMember ? noOp : parentMember);
                 function parentGenerator (self) {
-                    if (parentMember._isParentGenerator) parentMember = parentMember(self);
+                    var _super = parentMember;
+                    if (_super._isParentGenerator) _super = _super(self);
+                    else _super = function () {
+                        return parentMember.apply(self, arguments);
+                    };
                     return function () {
                         var args = $.makeArray(arguments);
-                        args.push(function () {
-                            return parentMember.apply(self, arguments);
-                        });
+                        args.push(_super);
                         return childMember.apply(self, args);
                     };
                 }
