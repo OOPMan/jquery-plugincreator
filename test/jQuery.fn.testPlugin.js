@@ -415,9 +415,7 @@ describe("jQuery.fn.testPlugin", function () {
 
             describe("jQuery('.non-unique').first().grandChildOfTestPlugin('extend', grandChildInstanceMembers)", function () {
                 var first = nonUnique.first();
-                var firstInstance = first.data("jquery-plugincreator-grandChildOfTestPlugin");
                 var next = first.next();
-                var nextInstance = next.data("jquery-plugincreator-grandChildOfTestPlugin");
 
                 it("should extend the first grandChildOfTestPlugin instance with additional members from `grandChildInstanceMembers`", function () {
                     first.grandChildOfTestPlugin("extend", grandChildInstanceMembers);
@@ -428,7 +426,7 @@ describe("jQuery.fn.testPlugin", function () {
                         first.grandChildOfTestPlugin("setTestString", "Hello World");
                     });
                     it("should set the `testString` key in the `options` member on the first .non-unique grandChildOfTestPlugin instance to 'Hello World'", function () {
-                        test.string(firstInstance.options.testString).is("Hello World");
+                        test.string(first.data("jquery-plugincreator-grandChildOfTestPlugin").options.testString).is("Hello World");
                     });
                 });
             });
