@@ -429,6 +429,16 @@ describe("jQuery.fn.testPlugin", function () {
                         test.string(first.data("jquery-plugincreator-grandChildOfTestPlugin").options.testString).is("Hello World");
                     });
                 });
+
+                describe("jQuery('.non-unique').first().next().grandChildOfTestPlugin('setTestString', 'Hello World')", function () {
+                    var testString = "Hello World";
+                    it("should call `setTestString` on the second .non-unique grandChildOfTestPlugin instance", function () {
+                        next.grandChildOfTestPlugin("setTestString", testString);
+                    });
+                    it("should set the `testString` key in the `options` member on the second .non-unique grandChildOfTestPlugin instance to 'Hello WorldHello WorldHello WorldHello World'", function () {
+                        test.string(next.data("jquery-plugincreator-grandChildOfTestPlugin").options.testString).is(testString + testString + testString + testString);
+                    });
+                });
             });
         });
     });
