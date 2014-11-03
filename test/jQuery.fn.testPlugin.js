@@ -1,3 +1,4 @@
+"use strict";
 var test = require("unit.js"),
     assert = test.assert,
     common = require("./common.js");

@@ -1,7 +1,8 @@
+"use strict";
 var test = require("unit.js"),
     fs = require("fs"),
     jsdom = require("jsdom"),
-    html = fs.readFileSync(__dirname + "/test.html");
+    html = fs.readFileSync(__dirname + "/test.html"),
     common = {
         getDocument: function () {
             return jsdom.jsdom(html);
