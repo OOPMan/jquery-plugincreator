@@ -9,18 +9,10 @@
  */
 /**
  * TODO: Add checks to prevent over-writing plugins
- * TODO: Add checks to prevent re-instantating plugins
- * TODO: Add plugin destruction handling
- * TODO: Add ability to control whether extendPlugin calls parent constructor
  * TODO: Add ability to not specify plugin name and have a randomly generated name assigned
  */
 "use strict";
 (function () {
-    /**
-     * A function that does nothing and can be safely executed in a bound or unbound fashion.
-     */
-    function noOp() {}
-
     /**
      *
      * @param {jQuery} jQuery
@@ -28,6 +20,7 @@
      */
     function pluginCreatorFactory(jQuery) {
         var $ = jQuery,
+            noOp = jQuery.noop,
             scopeName = "jquery-plugincreator-",
             /**
              *
@@ -83,10 +76,8 @@
                  * Adds a new stateful plugin to jQuery.
                  *
                  * A stateful plugin consists of the following optional components:
-                 * - A constructor function to be executed when the plugin is instantiated on a given element.
                  * - An object defining default properties to be associated with a plugin instance via its options member
                  * - An object defining member functions and values to be associated with a plugin instances prototype.
-                 * - A prototype function to be used as the plugin instances prototype when the plugin is instantiated on a given element.
                  *
                  * @param {string} name
                  * @param {Object} [defaults]
@@ -171,10 +162,12 @@
                         return this.each(function() {
                             var instance = $.data(this, scopeName + name);
                             if (instance) {
-                                if (typeof options == "string") { // call a method on the instance
+                                if (typeof options == "string" && typeof instance[options] == "function") { // call a method on the instance
                                     instance[options].apply(instance, args.slice(1));
-                                } else if (instance.update) { // call update on the instance
+                                } else if (typeof instance.update == "function" && $.isPlainObject(options)) { // call update on the instance
                                     instance.update.apply(instance, args);
+                                } else {
+                                    throw options + " is not a member of " + this;
                                 }
                             } else {
                                 instantiatePlugin(this, options, args.slice(1));
@@ -229,12 +222,12 @@
                      *
                      * @param {string} name
                      * @param {string} newName
-                     * @param {Object} [members]
+                     * @param {Object} [childMembers]
                      * @return {string}
                      */
-                     $.fn[name].extendTo = function (newName, members) {
+                     $.fn[name].extendTo = function (newName, childMembers) {
                         $.fn[name].cloneTo(newName);
-                        $.fn[newName].extendMembersWith(members);
+                        $.fn[newName].extendMembersWith(childMembers);
                      };
 
                     return name;
