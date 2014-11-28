@@ -1,5 +1,5 @@
 ==========================
-jQuery-PluginCreator 0.1.0
+jQuery-PluginCreator 0.1.1
 ==========================
 
 A jQuery add-on that makes creating plugins a little easier.
@@ -283,7 +283,8 @@ The plugin processing logic does the following:
 3. If no instance is found, instantiate a plugin instance on the element using the contents of the *options* parameter
    to override values supplied by **jQuery.fn.NAME.defaults** to the plugin instance. Additionally, any additional parameters
    supplied to **jQuery.fn.NAME** will be passed in to the **init** member function of the plugin instance. The plugin instance
-   is associated with its parent element using a data attribute of the form *data-jquery-plugincreator-NAME*.
+   is associated with its parent element using a data attribute of the form *data-jquery-plugincreator-NAME*. The instantiated
+   plugin is returned, allowing plugin instantiation on single-element selections to be used for assignments.
 
 options
 -------
