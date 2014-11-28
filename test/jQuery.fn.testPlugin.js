@@ -21,17 +21,29 @@ describe("jQuery.fn.testPlugin", function () {
             _setOption: function (option, value) {
                 this.options[option] = value;
             },
+            _getOption: function (option) {
+                return this.options[option];
+            },
             setTestNumber: function (value) {
                 if (typeof value == "number") this._setOption("testNumber", value);
                 else throw value + " is not a number";
+            },
+            getTestNumber: function () {
+                return this._getOption("testNumber");
             },
             setTestBoolean: function (value) {
                 if (typeof value == "boolean") this._setOption("testBoolean", value);
                 else throw value + " is not a boolean";
             },
+            getTestBoolean: function () {
+                return this._getOption("testBoolean");
+            },
             setTestString: function (value) {
                 if (typeof value == "string") this._setOption("testString", value);
                 else throw value + " is not a string";
+            },
+            getTestString: function () {
+                return this._getOption("testString");
             }
         },
         childMembers = {
