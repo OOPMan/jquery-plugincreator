@@ -126,6 +126,12 @@ describe("jQuery.fn.testPlugin", function () {
             });
         });
 
+        describe("jQuery('#unique').testPlugin('getTestNumber')", function () {
+            it("should call `getTestNumber` on the testPlugin instance and the number 321 should be returned", function () {
+                test.number(unique.testPlugin("getTestNumber")).is(321);
+            });
+        });
+
         describe("jQuery('#unique').testPlugin('setTestNumber', 'a string')", function () {
             it("should trigger an exception when trying to call `setTestNumber` on the testPlugin instance", function () {
                 test.exception(function () {
@@ -143,6 +149,12 @@ describe("jQuery.fn.testPlugin", function () {
             });
         });
 
+        describe("jQuery('#unique').testPlugin('getTestBoolean')", function () {
+            it("should call `getTestBoolean` on the testPlugin instance and the boolean false should be returned", function () {
+                test.bool(unique.testPlugin("getTestBoolean")).isFalse();
+            });
+        });
+
         describe("jQuery('#unique').testPlugin('setTestBoolean', 'a string')", function () {
             it("should trigger an exception when trying to call `setTestBoolean` on the testPlugin instance", function () {
                 test.exception(function () {
@@ -157,6 +169,12 @@ describe("jQuery.fn.testPlugin", function () {
             });
             it("should set the `testBoolean` key in the `options` member on the testPlugin instance to 'Hello World'", function () {
                 test.string(this.instance.options.testString).is("Hello World");
+            });
+        });
+
+        describe("jQuery('#unique').testPlugin('getTestString')", function () {
+            it("should call `getTestString` on the testPlugin instance and the value 'Hello World' should be returned", function () {
+                test.string(unique.testPlugin("getTestString")).is("Hello World");
             });
         });
 
