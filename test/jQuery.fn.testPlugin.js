@@ -111,6 +111,12 @@ describe("jQuery.fn.testPlugin", function () {
             test.bool(this.instance.initCalled).isTrue();
         });
 
+        describe("jQuery('#unqiue').testPlugin('getInstance')", function () {
+            it("should call `getInstance` on the testPlugin instance and return a reference to the testPlugin instance", function () {
+                test.bool(this.instance == unique.testPlugin("getInstance"));
+            });
+        });
+
         describe("jQuery('#unique').testPlugin('setTestNumber', 321)", function () {
             it("should call `setTestNumber` on the testPlugin instance", function () {
                 unique.testPlugin("setTestNumber", 321);
@@ -178,7 +184,7 @@ describe("jQuery.fn.testPlugin", function () {
         describe("jQuery('#unique').cloneOfTestPlugin()", function () {
             it("should instantiate cloneOfTestPlugin on #unique", function () {
                 unique.cloneOfTestPlugin();
-                this.instance = unique.data("jquery-plugincreator-cloneOfTestPlugin");
+                this.instance = unique.cloneOfTestPlugin("getInstance");
                 test.object(this.instance);
             });
             it("should copy the contents of `defaults` into the `options` member on the cloneOfTestPlugin instance", function () {
@@ -256,7 +262,7 @@ describe("jQuery.fn.testPlugin", function () {
         describe("jQuery('#unique').childOfTestPlugin()", function () {
             it("should instantiate childOfTestPlugin on #unique", function () {
                 unique.childOfTestPlugin();
-                this.instance = unique.data("jquery-plugincreator-childOfTestPlugin");
+                this.instance = unique.childOfTestPlugin("getInstance");
                 test.object(this.instance);
             });
             it("should copy the contents of `defaults` into the `options` member on the childOfTestPlugin instance", function () {
@@ -335,7 +341,7 @@ describe("jQuery.fn.testPlugin", function () {
         describe("jQuery('#unique').grandChildOfTestPlugin()", function () {
             it("should instantiate grandChildOfTestPlugin on #unique", function () {
                 unique.grandChildOfTestPlugin();
-                this.instance = unique.data("jquery-plugincreator-grandChildOfTestPlugin");
+                this.instance = unique.grandChildOfTestPlugin("getInstance");
                 test.object(this.instance);
             });
             it("should copy the contents of `defaults` into the `options` member on the grandChildOfTestPlugin instance", function () {
@@ -412,17 +418,17 @@ describe("jQuery.fn.testPlugin", function () {
             it("should instantiate grandChildOfTestPlugin on each .non-unique", function () {
                 nonUnique.grandChildOfTestPlugin();
                 nonUnique.each(function () {
-                    test.object(jQuery.data(this, "jquery-plugincreator-grandChildOfTestPlugin"));
+                    test.object(jQuery(this).grandChildOfTestPlugin("getInstance"));
                 });
             });
             it("should copy the contents of `defaults` into the `options` member on each grandChildOfTestPlugin instance", function () {
                 nonUnique.each(function () {
-                    test.object(jQuery.data(this, "jquery-plugincreator-grandChildOfTestPlugin").options).is(defaults);
+                    test.object(jQuery(this).grandChildOfTestPlugin("getInstance").options).is(defaults);
                 });
             });
             it("should call `constructor` during instantiation and set the `initCalled` member on each grandChildOfTestPlugin instance to true", function () {
                 nonUnique.each(function () {
-                    test.bool(jQuery.data(this, "jquery-plugincreator-grandChildOfTestPlugin").initCalled).isTrue();
+                    test.bool(jQuery(this).grandChildOfTestPlugin("getInstance").initCalled).isTrue();
                 });
             });
 
@@ -439,7 +445,7 @@ describe("jQuery.fn.testPlugin", function () {
                         first.grandChildOfTestPlugin("setTestString", "Hello World");
                     });
                     it("should set the `testString` key in the `options` member on the first .non-unique grandChildOfTestPlugin instance to 'Hello World'", function () {
-                        test.string(first.data("jquery-plugincreator-grandChildOfTestPlugin").options.testString).is("Hello World");
+                        test.string(first.grandChildOfTestPlugin("getInstance").options.testString).is("Hello World");
                     });
                 });
 
@@ -449,7 +455,7 @@ describe("jQuery.fn.testPlugin", function () {
                         next.grandChildOfTestPlugin("setTestString", testString);
                     });
                     it("should set the `testString` key in the `options` member on the second .non-unique grandChildOfTestPlugin instance to 'Hello WorldHello WorldHello WorldHello World'", function () {
-                        test.string(next.data("jquery-plugincreator-grandChildOfTestPlugin").options.testString).is(testString + testString + testString + testString);
+                        test.string(next.grandChildOfTestPlugin("getInstance").options.testString).is(testString + testString + testString + testString);
                     });
                 });
             });
