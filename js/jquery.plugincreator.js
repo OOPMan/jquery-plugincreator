@@ -188,20 +188,23 @@
                      * @returns {jQuery}
                      */
                     $.fn[name] = function(options) {
-                        var args = $.makeArray(arguments);
+                        var args = $.makeArray(arguments),
+                            result = this;
                         if (this.length === 1) {
-                            return processPluginCall(this[0], options, args) || this;
+                            result = processPluginCall(this[0], options, args);
                         } else {
                             if (options === "map") {
-                                return this.map(function () {
+                                result = this.map(function () {
                                     return processPluginCall(this, args[1], args.slice(2));
                                 });
                             } else {
-                                return this.each(function () {
+                                result = this.each(function () {
                                     processPluginCall(this, options, args);
                                 });
                             }
                         }
+                        if (typeof result == "undefined") result = this;
+                        return result;
                     };
 
                     /**
