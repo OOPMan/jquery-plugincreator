@@ -93,6 +93,13 @@
                             init: noOp,
                             /**
                              *
+                             * @returns {Object}
+                             */
+                            getInstance: function () {
+                                return this;
+                            },
+                            /**
+                             *
                              * @param {Object} [options]
                              * @returns {Object}
                              */
@@ -106,7 +113,7 @@
                              * @returns {boolean}
                              */
                             extend: function (members) {
-                                $.extend(true, this, wrapParents(members, this, this));
+                                return $.extend(true, this, wrapParents(members, this, this));
                             },
                             /**
                              * Destructor function, performs the following:
@@ -153,26 +160,49 @@
                     }
 
                     /**
+                     * A function to handle the actual process of instantiating a plugin instance or calling a method on
+                     * a given plugin instance.
+                     *
+                     * @param {Object} self
+                     * @param {Object|String} options
+                     * @param {Array} args
+                     * @returns {*}
+                     */
+                    function processPluginCall(self, options, args) {
+                        var instance = $.data(self, scopeName + name);
+                        if (instance) {
+                            if (typeof options == "string" && typeof instance[options] == "function") { // call a method on the instance
+                                return instance[options].apply(instance, args.slice(1));
+                            } else if (typeof instance.update == "function" && $.isPlainObject(options)) { // call update on the instance
+                                return instance.update.apply(instance, args);
+                            } else {
+                                throw options + " is not a member of " + self;
+                            }
+                        } else {
+                            return instantiatePlugin(self, options, args.slice(1));
+                        }
+                    }
+
+                    /**
                      *
                      * @param {Object|string} options
                      * @returns {jQuery}
                      */
                     $.fn[name] = function(options) {
                         var args = $.makeArray(arguments);
-                        return this.each(function() {
-                            var instance = $.data(this, scopeName + name);
-                            if (instance) {
-                                if (typeof options == "string" && typeof instance[options] == "function") { // call a method on the instance
-                                    instance[options].apply(instance, args.slice(1));
-                                } else if (typeof instance.update == "function" && $.isPlainObject(options)) { // call update on the instance
-                                    instance.update.apply(instance, args);
-                                } else {
-                                    throw options + " is not a member of " + this;
-                                }
+                        if (this.length === 1) {
+                            return processPluginCall(this[0], options, args);
+                        } else {
+                            if (options === "map") {
+                                return this.map(function () {
+                                    return processPluginCall(this, args[1], args.slice(2));
+                                });
                             } else {
-                                instantiatePlugin(this, options, args.slice(1));
+                                return this.each(function () {
+                                    processPluginCall(this, options, args);
+                                });
                             }
-                        })
+                        }
                     };
 
                     /**
