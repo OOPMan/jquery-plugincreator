@@ -105,7 +105,6 @@
                              */
                             update: function (options) {
                                 $.extend(true, this.options, options || {});
-                                return this.options;
                             },
                             /**
                              *
@@ -113,7 +112,7 @@
                              * @returns {boolean}
                              */
                             extend: function (members) {
-                                return $.extend(true, this, wrapParents(members, this, this));
+                                $.extend(true, this, wrapParents(members, this, this));
                             },
                             /**
                              * Destructor function, performs the following:
