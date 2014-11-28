@@ -450,6 +450,30 @@ describe("jQuery.fn.testPlugin", function () {
                 });
             });
 
+            describe("jQuery('.non-unique').grandChildOfTestPlugin('map', 'getTestNumber')", function () {
+                it("should return a jQuery selection which can be converted to an Array matching [123, 123, 123, 123] by calling .get() on the selection", function () {
+                    var results = nonUnique.grandChildOfTestPlugin("map", "getTestNumber");
+                    test.object(results)
+                        .array(results.get()).is([123, 123, 123, 123]);
+                });
+            });
+
+            describe("jQuery('.non-unique').grandChildOfTestPlugin('map', 'getTestBoolean')", function () {
+                it("should return a jQuery selection which can be converted to an Array matching [true, true, true, true] by calling .get() on the selection", function () {
+                    var results = nonUnique.grandChildOfTestPlugin("map", "getTestBoolean");
+                    test.object(results)
+                        .array(results.get()).is([true, true, true, true]);
+                });
+            });
+
+            describe("jQuery('.non-unique').grandChildOfTestPlugin('map', 'getTestString')", function () {
+                it("should return a jQuery selection which can be converted to an Array matching ['A string', 'A string', 'A string', 'A string'] by calling .get() on the selection", function () {
+                    var results = nonUnique.grandChildOfTestPlugin("map", "getTestString");
+                    test.object(results)
+                        .array(results.get()).is(["A string", "A string", "A string", "A string"]);
+                });
+            });
+
             describe("jQuery('.non-unique').first().grandChildOfTestPlugin('extend', grandChildInstanceMembers)", function () {
                 var first = nonUnique.first();
                 var next = first.next();
