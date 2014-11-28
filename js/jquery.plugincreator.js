@@ -1,5 +1,5 @@
 /*!
- * jQuery Plugin Creator @VERSION
+ * jQuery Plugin Creator 0.1.1
  * https://github.com/OOPMan/jquery-plugin-creator
  *
  * Copyright 2014 Adam Jorgensen
@@ -141,7 +141,8 @@
                      */
                     function instantiatePlugin(element, options, initArguments) {
                         var options = options || {},
-                            prototype = $.extend(true, {}, members[0]);
+                            prototype = $.extend(true, {}, members[0]),
+                            instance = null;
 
                         function pluginConstructor () {
                             this.element = element;
@@ -155,7 +156,10 @@
                             $.extend(true, this, prototype);
                             this.init.apply(this, initArguments);
                         }
-                        $.data(element, scopeName + name, new pluginConstructor());
+
+                        instance = new pluginConstructor();
+                        $.data(element, scopeName + name, instance);
+                        return instance;
                     }
 
                     /**
