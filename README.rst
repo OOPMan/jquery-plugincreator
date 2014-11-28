@@ -1,6 +1,6 @@
-====================
-jQuery-PluginCreator
-====================
+==========================
+jQuery-PluginCreator 0.1.0
+==========================
 
 A jQuery add-on that makes creating plugins a little easier.
 
@@ -40,12 +40,15 @@ jQuery PluginCreator can be used in any of the following JavaScript environments
 * Browser + AMD (RequireJS, curl.js, etc)
 * Browser
 
+
+--------
 CommonJS
 --------
 * jsdom >= 1.0.0
 * jQuery >= 2.0.0
 
 
+-------
 Browser
 -------
 * jQuery >= 1.6.0
@@ -190,12 +193,13 @@ When a plugin is instantiated the contents of *members* around bound to the plug
 provides the function with access to the plugin instance via the **this** keyword.
 
 Additionally, this mechanism also ensures that when the function is called it receives an additional trailing parameter,
- referred to as **_super** in this documentation, that provides access to the function this function overrides. In the
+referred to as **_super** in this documentation, that provides access to the function this function overrides. In the
 event that the function overrides nothing, **_super** is safe to call as it results in a no-op.
 
 Also note that jQuery PluginCreator provides four base functions for new plugins. These functions are:
 
 * **init()**, the base constructor function called after plugin instantiation is complete. The base version is a no-op.
+* **getInstane()**, allows for the plugin instance to be retrieved.
 * **update(options)**, allows for the values on the *options* member to be updated for a given plugin instance.
 * **extend(members)**, allows for the plugin instance members to be updated post-instantiation. The scope/inheritance
   mechanism referred to above is applied to members supplied to this function, enabling access to overridden functions
@@ -231,15 +235,12 @@ Once the **jQuery.addPlugin** function has been used to create a new plugin, tha
 using the *jQuery.fn.NAME* object and applied to jQuery selections using the standard *jQuery("selector").NAME()* method.
 
 The following functions are made available:
-* **jQuery.fn.NAME(options)**, the base plugin function which can be used to instantiate plugin instances or interact
-  with existing plugin instances.
+* **jQuery.fn.NAME(options)**, the base plugin function which can be used to instantiate plugin instances or interact with existing plugin instances.
 * **jQuery.fn.NAME.defaults**, the *defaults* supplied to **addPlugin**
 * **jQuery.fn.NAME.updateDefaultsWith(options)**, a function that can be used to update the *defaults* supplied to **addPlugin**
 * **jQuery.fn.NAME.extendMembersWith(childMembers)**, a function that can be used to extend the *members* supplied to **addPlugin**
-* **jQuery.fn.NAME.cloneTo(newName)**, a function that can be used to clone the plugin as a new plugin while retaining
-  the existing *defaults* and *members* configuration.
-* **jQuery.fn.NAME.extendTo(newName, childMembers)**, a function that can be used to clone the plugin as a new plugin,
-  retaining the *defaults* configuration and optionally extending the *members* configuration.
+* **jQuery.fn.NAME.cloneTo(newName)**, a function that can be used to clone the plugin as a new plugin while retaining the existing *defaults* and *members* configuration.
+* **jQuery.fn.NAME.extendTo(newName, childMembers)**, a function that can be used to clone the plugin as a new plugin, retaining the *defaults* configuration and optionally extending the *members* configuration.
 
 --------------
 jQuery.fn.NAME
@@ -247,10 +248,30 @@ jQuery.fn.NAME
 The **jQuery.fn.NAME** function created by **jQuery.addPlugin** provides the core functionality of interacting with
 a plugin. It can be used to create new plugin instances or interact with existing ones.
 
-When **jQuery.fn.NAME** is called on a given jQuery selection it processes each element in turn and does the following:
+When **jQuery.fn.NAME** is called on a given jQuery selection it does the following:
 
-1. Attempt to retrieve plugin instance associated with the element.
-2. If an instance if found and...
+1. If the selection contains exactly 1 element, it returns the result of executing the plugin processing logic on that
+   element. This allows a call to like **jQuery("#your-element").yourPlugin("getInstance")** to work as expected. In
+   instance where a call like **jQuery("#your-element").yourPlugin("yourMethod")** would return no value or return
+   the **undefined** value then the return value will be the jQuery selection, preserving the jQuery chaining effect.
+2. If the selection does not contain exactly 1 element and...
+
+   a. ...*options* === "map", it applies the plugin processing logic to the selection using the **map** operation,
+      returning the resultant selection. This output selection can be converted to a standard **Array** by applying the
+      **get** operation on the selection.
+
+      When applying the plugin processing logic the initial *options* value of "map" is discarded. The next argument is
+      considered to be the *options* value and any further arguments are treated as additional parameters.
+
+   b ...*options* !== "map", it applies the plugin processing logic to the selection using the **each** operation,
+     returning the selection as expected.
+
+
+The plugin processing logic does the following:
+
+1. Attempt to retrieve plugin instance associated with input element.
+2. If an instance is found and...
+
    a. ...*options* is a **string** and **instance.OPTIONS** is a function, treat the call to **jQuery.fn.NAME** as an
       attempt to call a member function on the plugin instance. The member function, **instance.OPTIONS** is called and
       any additional parameters supplied to **jQuery.fn.NAME** will be passed to the member function being called.
@@ -262,9 +283,6 @@ When **jQuery.fn.NAME** is called on a given jQuery selection it processes each 
    to override values supplied by **jQuery.fn.NAME.defaults** to the plugin instance. Additionally, any additional parameters
    supplied to **jQuery.fn.NAME** will be passed in to the **init** member function of the plugin instance. The plugin instance
    is associated with its parent element using a data attribute of the form *data-jquery-plugincreator-NAME*.
-
-Currently there is no provision for handling the results returned by calls to individual plugin instance member functions,
-but may be supported in the future with special handling that collects and returns the results of calls to member functions.
 
 options
 -------
@@ -334,6 +352,7 @@ Tests
 
 jQuery PluginCreator includes a test suite written using Unit.JS and Mocha.JS.
 
+-----
 Usage
 -----
   ::
