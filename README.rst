@@ -196,10 +196,10 @@ Additionally, this mechanism also ensures that when the function is called it re
 referred to as **_super** in this documentation, that provides access to the function this function overrides. In the
 event that the function overrides nothing, **_super** is safe to call as it results in a no-op.
 
-Also note that jQuery PluginCreator provides four base functions for new plugins. These functions are:
+Also note that jQuery PluginCreator provides five base functions for new plugins. These functions are:
 
 * **init()**, the base constructor function called after plugin instantiation is complete. The base version is a no-op.
-* **getInstane()**, allows for the plugin instance to be retrieved.
+* **getInstance()**, allows for the plugin instance to be retrieved.
 * **update(options)**, allows for the values on the *options* member to be updated for a given plugin instance.
 * **extend(members)**, allows for the plugin instance members to be updated post-instantiation. The scope/inheritance
   mechanism referred to above is applied to members supplied to this function, enabling access to overridden functions
@@ -242,9 +242,9 @@ The following functions are made available:
 * **jQuery.fn.NAME.cloneTo(newName)**, a function that can be used to clone the plugin as a new plugin while retaining the existing *defaults* and *members* configuration.
 * **jQuery.fn.NAME.extendTo(newName, childMembers)**, a function that can be used to clone the plugin as a new plugin, retaining the *defaults* configuration and optionally extending the *members* configuration.
 
---------------
-jQuery.fn.NAME
---------------
+------------------------------
+jQuery.fn.NAME(options, *args)
+------------------------------
 The **jQuery.fn.NAME** function created by **jQuery.addPlugin** provides the core functionality of interacting with
 a plugin. It can be used to create new plugin instances or interact with existing ones.
 
@@ -256,15 +256,15 @@ When **jQuery.fn.NAME** is called on a given jQuery selection it does the follow
    the **undefined** value then the return value will be the jQuery selection, preserving the jQuery chaining effect.
 2. If the selection does not contain exactly 1 element and...
 
-   a. ...*options* === "map", it applies the plugin processing logic to the selection using the **map** operation,
+   a. *options* === "map", it applies the plugin processing logic to the selection using the **map** operation,
       returning the resultant selection. This output selection can be converted to a standard **Array** by applying the
       **get** operation on the selection.
 
       When applying the plugin processing logic the initial *options* value of "map" is discarded. The next argument is
       considered to be the *options* value and any further arguments are treated as additional parameters.
 
-   b ...*options* !== "map", it applies the plugin processing logic to the selection using the **each** operation,
-     returning the selection as expected.
+   b. *options* !== "map", it applies the plugin processing logic to the selection using the **each** operation,
+      returning the selection as expected.
 
 
 The plugin processing logic does the following:
@@ -272,13 +272,14 @@ The plugin processing logic does the following:
 1. Attempt to retrieve plugin instance associated with input element.
 2. If an instance is found and...
 
-   a. ...*options* is a **string** and **instance.OPTIONS** is a function, treat the call to **jQuery.fn.NAME** as an
+   a. *options* is a **string** and **instance.OPTIONS** is a function, treat the call to **jQuery.fn.NAME** as an
       attempt to call a member function on the plugin instance. The member function, **instance.OPTIONS** is called and
       any additional parameters supplied to **jQuery.fn.NAME** will be passed to the member function being called.
-   b. ...*options* is a plain **object** and **instance.update** is a function, treat the call to **jQuery.fn.NAME** as an
+   b. *options* is a plain **object** and **instance.update** is a function, treat the call to **jQuery.fn.NAME** as an
       attempt to call the **update** member function on the plugin instance. **instance.update** is called with *options*
       supplied as a parameter.
-   c. ...none of the above apply, throw an exception.
+   c. none of the above apply, throw an exception.
+
 3. If no instance is found, instantiate a plugin instance on the element using the contents of the *options* parameter
    to override values supplied by **jQuery.fn.NAME.defaults** to the plugin instance. Additionally, any additional parameters
    supplied to **jQuery.fn.NAME** will be passed in to the **init** member function of the plugin instance. The plugin instance
@@ -288,15 +289,20 @@ options
 -------
 A **string** or plain **object**.
 
+*args
+-----
+Additional parameters may be passed to **jQuery.fn.NAME** and will be passed on to the plugin processing logic and
+from there to any plugin instance member functions or constructors called.
+
 -----------------------
 jQuery.fn.NAME.defaults
 -----------------------
 **jQuery.fn.NAME.defaults** provides a direct reference to the *defaults* **object** that was passed to **jQuery.addPlugin**
 in during the creation of the plugin. If no *defaults* were passed in then this will be an empty **object**.
 
----------------------------------
-jQuery.fn.NAME.updateDefaultsWith
----------------------------------
+------------------------------------------
+jQuery.fn.NAME.updateDefaultsWith(options)
+------------------------------------------
 The **jQuery.fn.NAME.updateDefaultsWith** function provides a means of updating the *defaults* **object** associated
 with the plugin. The update is performed using **jQuery.extend** and performs a deep-copy of the *options* **object**
 passed in.
@@ -305,9 +311,9 @@ options
 -------
 A plain **object** containing updated key-value pairs to be used to update the *defaults* **object** associated with the plugin.
 
---------------------------------
-jQuery.fn.NAME.extendMembersWith
---------------------------------
+----------------------------------------------
+jQuery.fn.NAME.extendMembersWith(childMembers)
+----------------------------------------------
 **jQuery.fn.NAME.extendMembersWith** provides a means to supplement the *members* that were supplied to **jQuery.addPlugin**.
 However, it is important to note that this function is designed to leave existing instances of the plugin unaffected.
 
@@ -320,9 +326,9 @@ childMembers
 ------------
 A plain **objects** containing new members.
 
-----------------------
-jQuery.fn.NAME.cloneTo
-----------------------
+-------------------------------
+jQuery.fn.NAME.cloneTo(newName)
+-------------------------------
 The **jQuery.fn.NAME.cloneTo** function provides the ability to clone an existing plugin, along with its *defaults*
 and *members* to a new plugin on **jQuery.fn**. This cloning process basically leverages the existing **jQuery.addPlugin**
 function and hence should function similarly.
@@ -331,9 +337,9 @@ newName
 -------
 A **string**.
 
------------------------
-jQuery.fn.NAME.extendTo
------------------------
+----------------------------------------------
+jQuery.fn.NAME.extendTo(newName, childMembers)
+----------------------------------------------
 The **jQuery.fn.NAME.extendTo** function enables a cloned to a new plugin on **jQuery.fn** and then extended with new
 members. This function leverages **jQuery.fn.NAME.cloneTo** and **jQuery.fn.NAME.extendMembersWith** and hence should
 function as per the documentation for those functions.
@@ -344,7 +350,7 @@ A **string**
 
 childMembers
 ------------
-A plain **object=** containing new members.
+A plain **object** containing new members.
 
 
 Tests
