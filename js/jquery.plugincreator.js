@@ -191,7 +191,7 @@
                     $.fn[name] = function(options) {
                         var args = $.makeArray(arguments);
                         if (this.length === 1) {
-                            return processPluginCall(this[0], options, args);
+                            return processPluginCall(this[0], options, args) || this;
                         } else {
                             if (options === "map") {
                                 return this.map(function () {
