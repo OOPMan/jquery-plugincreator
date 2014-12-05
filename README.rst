@@ -192,9 +192,9 @@ functionality.
 When a plugin is instantiated the contents of *members* around bound to the plugin instance using a mechanism that
 provides the function with access to the plugin instance via the **this** keyword.
 
-Additionally, this mechanism also ensures that if the final parameter of a function is named **_super** then when the
-function is called the value for **_super** will be automatically populated with a reference to the function overriden
-by the called function, if such a overriden function exists. If not, then **_super** will be populated with a no-op and is
+Additionally, this mechanism also ensures that if the first parameter of a function is named **_super** then when the
+function is called the value for **_super** will be automatically populated with a reference to the function overridden
+by the called function, if such a overridden function exists. If not, then **_super** will be populated with a no-op and is
 thus safe to call anyway.
 
 Also note that jQuery PluginCreator provides five base functions for new plugins. These functions are:
