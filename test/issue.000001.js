@@ -25,6 +25,9 @@ describe("issue000001", function () {
             },
             methodC: function () {
                 this.options.testNumber = 100;
+            },
+            methodD: function () {
+                this.options.testNumber = 0;
             }
         },
         childMembers = {
@@ -70,6 +73,14 @@ describe("issue000001", function () {
              */
             methodC: function (_super) {
                 if (typeof _super == "function") this.options.testNumber = -100;
+            },
+            methodD: function (optionalParameter, _super) {
+                var args = jQuery.makeArray(arguments),
+                    optionalParameter = args.shift(),
+                    _super = args.shift();
+                if (typeof _super == "function") _super();
+                if (typeof optionalParameter != "undefined") this.options.number += optionalParameter;
+                for (var i = 0; i < args.length; i ++) this.options.testNumber += args[i];
             }
         };
 
@@ -140,6 +151,13 @@ describe("issue000001", function () {
                 test.number(unique.testPlugin("getInstance").options.testNumber).is(100);
             });
         });
+
+        describe("jQuery('#unique').testPlugin('methodD')", function () {
+            it("should call `methodD` on the testPlugin instance, causing the `testNumber` in the `options` member on the testPlugin to be set to 0", function () {
+                unique.testPlugin("methodD");
+                test.number(unique.testPlugin("getInstance").options.testNumber).is(0);
+            });
+        });
     });
 
     describe("jQuery('#unique').childOfTestPlugin()", function () {
@@ -183,6 +201,13 @@ describe("issue000001", function () {
             it("should call `methodC` on the testPlugin instance, causing the `testNumber` in the `options` member on the testPlugin to be set to -100", function () {
                 unique.childOfTestPlugin("methodC");
                 test.number(unique.childOfTestPlugin("getInstance").options.testNumber).is(-100);
+            });
+        });
+
+        describe("jQuery('#unique').childOfTestPlugin('methodD')", function () {
+            it("should call `methodD` on the testPlugin instance, causing the `testNumber` in the `options` member on the testPlugin to be set to 10", function () {
+                unique.childOfTestPlugin("methodD", 1, 2, 3, 4);
+                test.number(unique.childOfTestPlugin("getInstance").options.testNumber).is(10);
             });
         });
     });
