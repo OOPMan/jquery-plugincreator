@@ -15,13 +15,32 @@
 (function () {
     /**
      *
-     * @param {jQuery} jQuery
+     * @param {Function} jQuery
+     * @param {Function} esprima
      * @returns {{addPlugin: addPlugin}}
      */
-    function pluginCreatorFactory(jQuery) {
+    function pluginCreatorFactory(jQuery, esprima) {
         var $ = jQuery,
             noOp = jQuery.noop,
             scopeName = "jquery-plugincreator-",
+            /**
+             * Given a function parameter name and a function, determines whether the function in question accepts the
+             * named parameter.
+             *
+             * As this function is used internally to detect whether a function defines the _super parameter and given
+             * that the _super parameter will always be the last parameter IF it is defined, the search is restricted
+             * to the very last parameter defined for a given function.
+             *
+             * @param {function} inputFunction
+             * @returns {boolean}
+             */
+            isSuperParameterDefinedForFunction = function(inputFunction) {
+                var inputFunctionAST = esprima.parse("f = " + inputFunction.toString()),
+                    inputFunctionParams = inputFunctionAST.body[0].expression.right.params,
+                    finalInputFunctionParam = inputFunctionParams.pop();
+                if (typeof finalInputFunctionParam == "undefined") return false;
+                return finalInputFunctionParam.name == "_super";
+            },
             /**
              *
              * @param {function} childMember
@@ -29,7 +48,8 @@
              * @returns {function}
              */
             parentWrapper = function (childMember, parentMember) {
-                var parentMember = (parentMember == childMember ? noOp : parentMember);
+                var parentMember = (parentMember == childMember ? noOp : parentMember),
+                    childMemberExpectsSuper = isSuperParameterDefinedForFunction(childMember);
                 function parentGenerator (self) {
                     var _super = parentMember;
                     if (_super._isParentGenerator) _super = _super(self);
@@ -38,7 +58,11 @@
                     };
                     return function () {
                         var args = $.makeArray(arguments);
-                        args.push(_super);
+                        // TODO: Check if this fixes issue #1
+                        if (childMemberExpectsSuper) {
+                            while (args.length < childMember.length - 1) args.push(undefined);
+                            args.push(_super);
+                        }
                         return childMember.apply(self, args);
                     };
                 }
@@ -274,29 +298,27 @@
     }
     // Export jQuery Plugin Creator
     if (typeof module !== "undefined") { // CommonJS
-        var factory = function (jQuery) {
-            var pluginCreator = pluginCreatorFactory(jQuery);
+        var factory = function (jQuery, esprima) {
+            var pluginCreator = pluginCreatorFactory(jQuery, esprima);
             jQuery.extend(jQuery, pluginCreator);
             return pluginCreator;
         };
         if (global.document) {
-            module.exports = factory(require("jquery"));
+            module.exports = factory(require("jquery"), require("esprima"));
         } else if (global.window) {
-            module.exports = factory(require("jquery")(global.window));
+            module.exports = factory(require("jquery", require("esprima"))(global.window));
         } else {
             module.exports = factory;
 
         }
     } else if (typeof define === "function" && define.amd) { // AMD Loader
-        define(["jquery"], function(jQuery) {
-            var pluginCreator = pluginCreatorFactory(jQuery);
+        define(["jquery", "esprima"], function(jQuery, esprima) {
+            var pluginCreator = pluginCreatorFactory(jQuery, esprima);
             jQuery.extend(jQuery, pluginCreator);
             return pluginCreator;
         });
-    } else if (typeof jQuery !== "undefined")  { // Global Browser Environment
-        jQuery.extend(jQuery, pluginCreatorFactory(jQuery));
-    } else {
-        throw "jQuery not defined";
+    } else { // Global Browser Environment
+        jQuery.extend(jQuery, pluginCreatorFactory(jQuery, esprima));
     }
 })();
 
