@@ -1,5 +1,5 @@
 /*!
- * jQuery Plugin Creator 0.2.0
+ * jQuery Plugin Creator 0.3.0
  * https://github.com/OOPMan/jquery-plugin-creator
  *
  * Copyright 2014 Adam Jorgensen
