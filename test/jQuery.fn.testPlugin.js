@@ -55,16 +55,16 @@ describe("jQuery.fn.testPlugin", function () {
                 if (typeof value == "boolean") this._setOption("testBoolean", !value);
                 else throw value + " is not a boolean";
             },
-            setTestString: function (value, _super) {
+            setTestString: function (_super, value) {
                 _super(value + value);
             }
         },
         grandChildMembers = {
-            _setOption: function (option, value, _super) {
+            _setOption: function (_super, option, value) {
                 _super(option, value);
                 _super(option + option, value);
             },
-            setTestString: function (value, _super) {
+            setTestString: function (_super, value) {
                 _super(value + value);
             }
         },

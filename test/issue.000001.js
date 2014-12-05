@@ -43,7 +43,7 @@ describe("issue000001", function () {
              * @param {number} [optionalParameter]
              * @param {Function} _super
              */
-            methodA: function (optionalParameter, _super) {
+            methodA: function (_super, optionalParameter) {
                 if (typeof optionalParameter != "undefined" && typeof optionalParameter != "function") this.options.testNumber += optionalParameter;
                 if (typeof _super == "function") _super();
             },
@@ -74,12 +74,9 @@ describe("issue000001", function () {
             methodC: function (_super) {
                 if (typeof _super == "function") this.options.testNumber = -100;
             },
-            methodD: function (optionalParameter, _super) {
-                var args = jQuery.makeArray(arguments),
-                    optionalParameter = args.shift(),
-                    _super = args.shift();
+            methodD: function (_super, optionalParameter) {
+                var args = jQuery.makeArray(arguments).slice(1);
                 if (typeof _super == "function") _super();
-                if (typeof optionalParameter != "undefined") this.options.number += optionalParameter;
                 for (var i = 0; i < args.length; i ++) this.options.testNumber += args[i];
             }
         };
