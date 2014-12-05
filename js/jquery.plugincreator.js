@@ -38,6 +38,7 @@
                     };
                     return function () {
                         var args = $.makeArray(arguments);
+                        //while (args.length < childMember.length - 1) args.push(undefined);
                         args.push(_super);
                         return childMember.apply(self, args);
                     };
@@ -145,6 +146,7 @@
                             instance = null;
 
                         function pluginConstructor () {
+                            this.instanceOf = name;
                             this.element = element;
                             this.context = $(element).addClass(scopeName + name);
                             this.options = $.extend(true, {}, defaults, options);
