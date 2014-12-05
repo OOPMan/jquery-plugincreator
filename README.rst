@@ -1,5 +1,5 @@
 ==========================
-jQuery-PluginCreator 0.1.1
+jQuery-PluginCreator 0.2.0
 ==========================
 
 A jQuery add-on that makes creating plugins a little easier.
