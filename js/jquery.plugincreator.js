@@ -38,7 +38,6 @@
                     };
                     return function () {
                         var args = $.makeArray(arguments);
-                        //while (args.length < childMember.length - 1) args.push(undefined);
                         args.push(_super);
                         return childMember.apply(self, args);
                     };
@@ -248,7 +247,7 @@
                      * @returns {string}
                      */
                     $.fn[name].cloneTo = function (newName) {
-                        return pluginCreator.addPlugin(newName, defaults, members);
+                        return pluginCreator.addPlugin(newName, defaults, $.extend(true, [], members));
                     };
 
                     /**
