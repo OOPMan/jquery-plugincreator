@@ -37,9 +37,9 @@
             isSuperParameterDefinedForFunction = function(inputFunction) {
                 var inputFunctionAST = esprima.parse("f = " + inputFunction.toString()),
                     inputFunctionParams = inputFunctionAST.body[0].expression.right.params,
-                    finalInputFunctionParam = inputFunctionParams.pop();
-                if (typeof finalInputFunctionParam == "undefined") return false;
-                return finalInputFunctionParam.name == "_super";
+                    firstInputFunctionParam = inputFunctionParams.shift();
+                if (typeof firstInputFunctionParam == "undefined") return false;
+                return firstInputFunctionParam.name == "_super";
             },
             /**
              *
@@ -58,11 +58,7 @@
                     };
                     return function () {
                         var args = $.makeArray(arguments);
-                        // TODO: Check if this fixes issue #1
-                        if (childMemberExpectsSuper) {
-                            while (args.length < childMember.length - 1) args.push(undefined);
-                            args.push(_super);
-                        }
+                        if (childMemberExpectsSuper) args.unshift(_super);
                         return childMember.apply(self, args);
                     };
                 }
