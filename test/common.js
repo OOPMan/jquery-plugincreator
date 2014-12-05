@@ -2,6 +2,7 @@
 var test = require("unit.js"),
     fs = require("fs"),
     jsdom = require("jsdom"),
+    esprima = require("esprima"),
     html = fs.readFileSync(__dirname + "/test.html"),
     common = {
         getDocument: function () {
@@ -13,7 +14,7 @@ var test = require("unit.js"),
         getjQuery: function (window) {
             var window = window || common.getWindow(),
                 jQuery = require("jquery")(window),
-                pluginCreator = require(__dirname + "/../js/jquery.plugincreator.js")(jQuery);
+                pluginCreator = require(__dirname + "/../js/jquery.plugincreator.js")(jQuery, esprima);
             return jQuery;
         }
     };
