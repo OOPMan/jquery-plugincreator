@@ -19,7 +19,6 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
-    "bower": "~0.8.5",
     "jquery": ">=2.0.0",
     "jsdom": ">=1.0.0",
     "esprima": ">=1.2.2"
