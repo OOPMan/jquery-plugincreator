@@ -11,7 +11,6 @@
  * TODO: Add checks to prevent over-writing plugins
  * TODO: Add ability to not specify plugin name and have a randomly generated name assigned
  */
-"use strict";
 
 import esprima from "esprima";
 
