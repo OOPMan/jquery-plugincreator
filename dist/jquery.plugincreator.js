@@ -1,16 +1,16 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(["exports", "esprima"], factory);
+        define(["exports", "esprima", "jquery"], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require("esprima"));
+        factory(exports, require("esprima"), require("jquery"));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.esprima);
+        factory(mod.exports, global.esprima, global.jquery);
         global.jqueryPlugincreator = mod.exports;
     }
-})(this, function (exports, _esprima) {
+})(this, function (exports, _esprima, _jquery) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
@@ -19,13 +19,30 @@
 
     var _esprima2 = _interopRequireDefault(_esprima);
 
+    var _jquery2 = _interopRequireDefault(_jquery);
+
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
             default: obj
         };
     }
 
-    var noOp = jQuery.noop,
+    /*!
+     * jQuery Plugin Creator 0.3.0
+     * https://github.com/OOPMan/jquery-plugin-creator
+     *
+     * Copyright 2014 Adam Jorgensen
+     * Released under the MIT license.
+     * http://github.com/OOPMan/jquery-plugin-creator/LICENSE
+     *
+     */
+    /**
+     * TODO: Add checks to prevent over-writing plugins
+     * TODO: Add ability to not specify plugin name and have a randomly generated name assigned
+     */
+
+    var $ = _jquery2.default,
+        noOp = _jquery2.default.noop,
         scopeName = "jquery-plugincreator-",
 
     /**
@@ -296,19 +313,7 @@
 
             return name;
         }
-    }; /*!
-        * jQuery Plugin Creator 0.3.0
-        * https://github.com/OOPMan/jquery-plugin-creator
-        *
-        * Copyright 2014 Adam Jorgensen
-        * Released under the MIT license.
-        * http://github.com/OOPMan/jquery-plugin-creator/LICENSE
-        *
-        */
-    /**
-     * TODO: Add checks to prevent over-writing plugins
-     * TODO: Add ability to not specify plugin name and have a randomly generated name assigned
-     */
+    };
 
     exports.default = pluginCreator;
 });

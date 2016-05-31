@@ -2,10 +2,10 @@
   "name": "jquery-plugincreator",
   "version": "0.3.0",
   "description": "A jQuery add-on that makes creating plugins a little easier.",
-  "main": "./js/jquery.plugincreator.es6",
+  "main": "./es6/jquery.plugincreator.es6",
   "scripts": {
     "test": "babel-node ./node_modules/mocha/bin/mocha",
-    "build": "babel js --presets es2015 --plugins transform-es2015-modules-umd --out-dir dist"
+    "build": "babel es6 --presets es2015 --plugins transform-es2015-modules-umd --out-dir dist"
   },
   "repository": {
     "type": "git",
