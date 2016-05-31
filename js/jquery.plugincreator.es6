@@ -14,7 +14,7 @@
 
 import esprima from "esprima";
 
-var noOp = jQuery.noop,
+let noOp = jQuery.noop,
     scopeName = "jquery-plugincreator-",
     /**
      * Given a function parameter name and a function, determines whether the function in question accepts the
