@@ -9,12 +9,12 @@ var test = require("unit.js"),
             return jsdom.jsdom(html);
         },
         getWindow: function (document) {
-            return document ? document.parentWindow : common.getDocument().parentWindow;
+            return document ? document.parentWindow : common.getDocument().defaultView;
         },
         getjQuery: function (window) {
             var window = window || common.getWindow(),
                 jQuery = require("jquery")(window),
-                pluginCreator = require(__dirname + "/../js/jquery.plugincreator.js")(jQuery, esprima);
+                pluginCreator = require(__dirname + "/../dist/jquery.plugincreator.js");
             return jQuery;
         }
     };
