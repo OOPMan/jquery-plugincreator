@@ -4,7 +4,8 @@
   "description": "A jQuery add-on that makes creating plugins a little easier.",
   "main": "./js/jquery.plugincreator.es6",
   "scripts": {
-    "test": ""
+    "test": "babel-node ./node_modules/mocha/bin/mocha",
+    "build": "babel js --presets es2015 --plugins transform-es2015-modules-umd --out-dir dist"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,10 @@
     "esprima": ">=1.2.2"
   },
   "devDependencies": {
-    "unit.js": ">=1.0.2",
-    "mocha": ">=2.0.0"
+    "babel-cli": ">=6.9.0",
+    "babel-plugin-transform-es2015-modules-umd": "^6.8.0",
+    "babel-preset-es2015": ">=6.9.0",
+    "mocha": ">=2.0.0",
+    "unit.js": ">=1.0.2"
   }
 }
