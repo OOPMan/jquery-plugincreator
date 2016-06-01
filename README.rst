@@ -36,16 +36,8 @@ Requirements
 
 jQuery PluginCreator can be used in any of the following JavaScript environments:
 
-* CommonJS (Node.JS, etc)
 * Browser + AMD (RequireJS, curl.js, etc)
 * Browser
-
-
---------
-CommonJS
---------
-* jsdom >= 1.0.0
-* jQuery >= 2.0.0
 
 
 -------
@@ -60,59 +52,24 @@ do the trick. For a CommonJS environment any jQuery 2.x release should work.
 Usage
 =====
 
---------
-CommonJS
---------
-  ::
-
-    var fs = require("fs"),
-        jsdom = require("jsdom"),
-        html = fs.readFileSync("/path/to/your/markup.html"),
-        document = jsdom.jsdom(html),
-        window = document.parentWindow,
-        jQuery = require("jquery")(window),
-        plugnCreator = require("jquery.plugincreator")(jQuery);
-
-    jQuery.addPlugin(
-      "myPlugin",
-      {
-        defaultSomething1: "a string",
-        defaultSomething2: 10
-      },
-      {
-        member1: function () {
-          // Do something
-        }
-      }
-    );
-
 -------------
 Browser + AMD
 -------------
   ::
 
-    <html>
-        <head>
-            <!-- Set up your AMD loader here --!>
-            <script type="text/javascript">
-                require(["jquery", "jquery.plugincreator"], function ($, pluginCreator) {
-                    $.addPlugin(
-                        "myPlugin",
-                        {
-                          defaultSomething1: "a string",
-                          defaultSomething2: 10
-                        },
-                        {
-                          member1: function () {
-                            // Do something
-                          }
-                        });
-                });
-            </script>
-        </head>
-        <body>
-        </body>
-    </html>
+    define(["jquery", "jquery.plugincreator"], function ($, pluginCreator) {
+      $.addPlugin(
+        "myPlugin",
+        {
+          defaultSomething1: "a string",
+          defaultSomething2: 10
+        },
+        {
+          member1: function () {
+            // Do something
+          }
+        });
+    });
 
 -------
 Browser
@@ -122,6 +79,7 @@ Browser
     <html>
         <head>
             <script type="text/javascript" src="jquery.js"></script>
+            <scropt type="text/javascript" src="esprime.js"></script>
             <script type="text/javascript" src="jquery.plugincreator.js"></script>
             <script type="text/javascript">
                 $.addPlugin(
@@ -366,4 +324,5 @@ Usage
   ::
 
     npm install
-    ./node_modules/mocha/bin/mocha -C -R spec
+    npm run-script build
+    npm run-script test
