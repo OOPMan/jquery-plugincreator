@@ -35,59 +35,59 @@ describe("issue000002", function () {
             test.number(nonUnique.length).is(4);
         });
 
-        it("jQuery.addPlugin('testPlugin', defaults, members) should create jQuery.fn.testPlugin", function () {
-            jQuery.addPlugin("testPlugin", defaults, members);
-            test.function(jQuery.fn.testPlugin)
-                .object(jQuery.fn.testPlugin.defaults)
+        it("jQuery.addPlugin('testPlugin0002', defaults, members) should create jQuery.fn.testPlugin0002", function () {
+            jQuery.addPlugin("testPlugin0002", defaults, members);
+            test.function(jQuery.fn.testPlugin0002)
+                .object(jQuery.fn.testPlugin0002.defaults)
                     .is(defaults)
-                .function(jQuery.fn.testPlugin.updateDefaultsWith)
-                .function(jQuery.fn.testPlugin.extendMembersWith)
-                .function(jQuery.fn.testPlugin.cloneTo)
-                .function(jQuery.fn.testPlugin.extendTo);
+                .function(jQuery.fn.testPlugin0002.updateDefaultsWith)
+                .function(jQuery.fn.testPlugin0002.extendMembersWith)
+                .function(jQuery.fn.testPlugin0002.cloneTo)
+                .function(jQuery.fn.testPlugin0002.extendTo);
         });
 
-        it("jQuery.fn.testPlugin.extendTo('childOfTestPlugin', childMembers) should create jQuery.fn.childOfTestPlugin", function () {
-            jQuery.fn.testPlugin.extendTo("childOfTestPlugin", childMembers);
-            test.function(jQuery.fn.childOfTestPlugin)
-                .object(jQuery.fn.childOfTestPlugin.defaults)
+        it("jQuery.fn.testPlugin0002.extendTo('childOfTestPlugin0002', childMembers) should create jQuery.fn.childOfTestPlugin0002", function () {
+            jQuery.fn.testPlugin0002.extendTo("childOfTestPlugin0002", childMembers);
+            test.function(jQuery.fn.childOfTestPlugin0002)
+                .object(jQuery.fn.childOfTestPlugin0002.defaults)
                     .is(defaults)
-                .function(jQuery.fn.childOfTestPlugin.updateDefaultsWith)
-                .function(jQuery.fn.childOfTestPlugin.extendMembersWith)
-                .function(jQuery.fn.childOfTestPlugin.cloneTo)
-                .function(jQuery.fn.childOfTestPlugin.extendTo);
+                .function(jQuery.fn.childOfTestPlugin0002.updateDefaultsWith)
+                .function(jQuery.fn.childOfTestPlugin0002.extendMembersWith)
+                .function(jQuery.fn.childOfTestPlugin0002.cloneTo)
+                .function(jQuery.fn.childOfTestPlugin0002.extendTo);
         });
     });
 
-    describe("jQuery('#unique').testPlugin()", function () {
-        it("should instantiate testPlugin on #unique", function () {
-            this.instance = unique.testPlugin();
+    describe("jQuery('#unique').testPlugin0002()", function () {
+        it("should instantiate testPlugin0002 on #unique", function () {
+            this.instance = unique.testPlugin0002();
             test.object(this.instance);
         });
-        it("should copy the contents of `defaults` into the `options` member on the testPlugin instance", function () {
+        it("should copy the contents of `defaults` into the `options` member on the testPlugin0002 instance", function () {
             test.object(this.instance.options).is(defaults);
         });
 
-        describe("jQuery('#unique').testPlugin('methodA')", function () {
-            it("should call `methodA` on the testPlugin instance, causing the `testNumber` in the `options` member on the testPlugin to be incremened by 1", function () {
-                unique.testPlugin("methodA");
-                test.number(unique.testPlugin("getInstance").options.testNumber).is(1);
+        describe("jQuery('#unique').testPlugin0002('methodA')", function () {
+            it("should call `methodA` on the testPlugin0002 instance, causing the `testNumber` in the `options` member on the testPlugin0002 to be incremened by 1", function () {
+                unique.testPlugin0002("methodA");
+                test.number(unique.testPlugin0002("getInstance").options.testNumber).is(1);
             });
         });
     });
 
-    describe("jQuery('#unique').childOfTestPlugin()", function () {
-        it("should instantiate childOfTestPlugin on #unique", function () {
-            this.instance = unique.childOfTestPlugin();
+    describe("jQuery('#unique').childOfTestPlugin0002()", function () {
+        it("should instantiate childOfTestPlugin0002 on #unique", function () {
+            this.instance = unique.childOfTestPlugin0002();
             test.object(this.instance);
         });
-        it("should copy the contents of `defaults` into the `options` member on the childOfTestPlugin instance", function () {
+        it("should copy the contents of `defaults` into the `options` member on the childOfTestPlugin0002 instance", function () {
             test.object(this.instance.options).is(defaults);
         });
 
-        describe("jQuery('#unique').childOfTestPlugin('methodA')", function () {
-            it("should call `methodA` on the testPlugin instance, causing the `testNumber` in the `options` member on the testPlugin to be incremented by 1", function () {
-                unique.childOfTestPlugin("methodA");
-                test.number(unique.childOfTestPlugin("getInstance").options.testNumber).is(2);
+        describe("jQuery('#unique').childOfTestPlugin0002('methodA')", function () {
+            it("should call `methodA` on the testPlugin0002 instance, causing the `testNumber` in the `options` member on the testPlugin0002 to be incremented by 1", function () {
+                unique.childOfTestPlugin0002("methodA");
+                test.number(unique.childOfTestPlugin0002("getInstance").options.testNumber).is(2);
             });
         });
     });

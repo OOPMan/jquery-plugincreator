@@ -91,117 +91,117 @@ describe("issue000001", function () {
             test.number(nonUnique.length).is(4);
         });
 
-        it("jQuery.addPlugin('testPlugin', defaults, members) should create jQuery.fn.testPlugin", function () {
-            jQuery.addPlugin("testPlugin", defaults, members);
-            test.function(jQuery.fn.testPlugin)
-                .object(jQuery.fn.testPlugin.defaults)
+        it("jQuery.addPlugin('testPlugin0001', defaults, members) should create jQuery.fn.testPlugin0001", function () {
+            jQuery.addPlugin("testPlugin0001", defaults, members);
+            test.function(jQuery.fn.testPlugin0001)
+                .object(jQuery.fn.testPlugin0001.defaults)
                     .is(defaults)
-                .function(jQuery.fn.testPlugin.updateDefaultsWith)
-                .function(jQuery.fn.testPlugin.extendMembersWith)
-                .function(jQuery.fn.testPlugin.cloneTo)
-                .function(jQuery.fn.testPlugin.extendTo);
+                .function(jQuery.fn.testPlugin0001.updateDefaultsWith)
+                .function(jQuery.fn.testPlugin0001.extendMembersWith)
+                .function(jQuery.fn.testPlugin0001.cloneTo)
+                .function(jQuery.fn.testPlugin0001.extendTo);
         });
 
-        it("jQuery.fn.testPlugin.extendTo('childOfTestPlugin', childMembers) should create jQuery.fn.childOfTestPlugin", function () {
-            jQuery.fn.testPlugin.extendTo("childOfTestPlugin", childMembers);
-            test.function(jQuery.fn.childOfTestPlugin)
-                .object(jQuery.fn.childOfTestPlugin.defaults)
+        it("jQuery.fn.testPlugin0001.extendTo('childOfTestPlugin0001', childMembers) should create jQuery.fn.childOfTestPlugin0001", function () {
+            jQuery.fn.testPlugin0001.extendTo("childOfTestPlugin0001", childMembers);
+            test.function(jQuery.fn.childOfTestPlugin0001)
+                .object(jQuery.fn.childOfTestPlugin0001.defaults)
                     .is(defaults)
-                .function(jQuery.fn.childOfTestPlugin.updateDefaultsWith)
-                .function(jQuery.fn.childOfTestPlugin.extendMembersWith)
-                .function(jQuery.fn.childOfTestPlugin.cloneTo)
-                .function(jQuery.fn.childOfTestPlugin.extendTo);
+                .function(jQuery.fn.childOfTestPlugin0001.updateDefaultsWith)
+                .function(jQuery.fn.childOfTestPlugin0001.extendMembersWith)
+                .function(jQuery.fn.childOfTestPlugin0001.cloneTo)
+                .function(jQuery.fn.childOfTestPlugin0001.extendTo);
         });
 
 
     });
 
-    describe("jQuery('#unique').testPlugin()", function () {
-        it("should instantiate testPlugin on #unique", function () {
-            this.instance = unique.testPlugin();
+    describe("jQuery('#unique').testPlugin0001()", function () {
+        it("should instantiate testPlugin0001 on #unique", function () {
+            this.instance = unique.testPlugin0001();
             test.object(this.instance);
         });
-        it("should copy the contents of `defaults` into the `options` member on the testPlugin instance", function () {
+        it("should copy the contents of `defaults` into the `options` member on the testPlugin0001 instance", function () {
             test.object(this.instance.options).is(defaults);
         });
 
-        describe("jQuery('#unique').testPlugin('methodA')", function () {
-            it("should call `methodA` on the testPlugin instance, causing the `testNumber` in the `options` member on the testPlugin to be incremented by 1", function () {
-                unique.testPlugin("methodA");
-                test.number(unique.testPlugin("getInstance").options.testNumber).is(2);
+        describe("jQuery('#unique').testPlugin0001('methodA')", function () {
+            it("should call `methodA` on the testPlugin0001 instance, causing the `testNumber` in the `options` member on the testPlugin0001 to be incremented by 1", function () {
+                unique.testPlugin0001("methodA");
+                test.number(unique.testPlugin0001("getInstance").options.testNumber).is(2);
             });
         });
 
-        describe("jQuery('#unique').testPlugin('methodB')", function () {
-            it("should call `methodB` on the testPlugin instance, causing the `testNumber` in the `options` member on the testPlugin to be decremented by 1", function () {
-                unique.testPlugin("methodB");
-                test.number(unique.testPlugin("getInstance").options.testNumber).is(1);
+        describe("jQuery('#unique').testPlugin0001('methodB')", function () {
+            it("should call `methodB` on the testPlugin0001 instance, causing the `testNumber` in the `options` member on the testPlugin0001 to be decremented by 1", function () {
+                unique.testPlugin0001("methodB");
+                test.number(unique.testPlugin0001("getInstance").options.testNumber).is(1);
             });
         });
 
-        describe("jQuery('#unique').testPlugin('methodC')", function () {
-            it("should call `methodC` on the testPlugin instance, causing the `testNumber` in the `options` member on the testPlugin to be set to 100", function () {
-                unique.testPlugin("methodC");
-                test.number(unique.testPlugin("getInstance").options.testNumber).is(100);
+        describe("jQuery('#unique').testPlugin0001('methodC')", function () {
+            it("should call `methodC` on the testPlugin0001 instance, causing the `testNumber` in the `options` member on the testPlugin0001 to be set to 100", function () {
+                unique.testPlugin0001("methodC");
+                test.number(unique.testPlugin0001("getInstance").options.testNumber).is(100);
             });
         });
 
-        describe("jQuery('#unique').testPlugin('methodD')", function () {
-            it("should call `methodD` on the testPlugin instance, causing the `testNumber` in the `options` member on the testPlugin to be set to 0", function () {
-                unique.testPlugin("methodD");
-                test.number(unique.testPlugin("getInstance").options.testNumber).is(0);
+        describe("jQuery('#unique').testPlugin0001('methodD')", function () {
+            it("should call `methodD` on the testPlugin0001 instance, causing the `testNumber` in the `options` member on the testPlugin0001 to be set to 0", function () {
+                unique.testPlugin0001("methodD");
+                test.number(unique.testPlugin0001("getInstance").options.testNumber).is(0);
             });
         });
     });
 
-    describe("jQuery('#unique').childOfTestPlugin()", function () {
-        it("should instantiate childOfTestPlugin on #unique", function () {
-            this.instance = unique.childOfTestPlugin();
+    describe("jQuery('#unique').childOfTestPlugin0001()", function () {
+        it("should instantiate childOfTestPlugin0001 on #unique", function () {
+            this.instance = unique.childOfTestPlugin0001();
             test.object(this.instance);
         });
-        it("should copy the contents of `defaults` into the `options` member on the childOfTestPlugin instance", function () {
+        it("should copy the contents of `defaults` into the `options` member on the childOfTestPlugin0001 instance", function () {
             test.object(this.instance.options).is(defaults);
         });
 
-        describe("jQuery('#unique').childOfTestPlugin('methodA', 2)", function () {
-            it("should call `methodA` on the testPlugin instance, causing the `testNumber` in the `options` member on the testPlugin to be incremented by 3 in total", function () {
-                unique.childOfTestPlugin("methodA", 2);
-                test.number(unique.childOfTestPlugin("getInstance").options.testNumber).is(4);
+        describe("jQuery('#unique').childOfTestPlugin0001('methodA', 2)", function () {
+            it("should call `methodA` on the testPlugin0001 instance, causing the `testNumber` in the `options` member on the testPlugin0001 to be incremented by 3 in total", function () {
+                unique.childOfTestPlugin0001("methodA", 2);
+                test.number(unique.childOfTestPlugin0001("getInstance").options.testNumber).is(4);
             });
         });
 
-        describe("jQuery('#unique').childOfTestPlugin('methodA')", function () {
-            it("should call `methodA` on the testPlugin instance, causing the `testNumber` in the `options` member on the testPlugin to be incremented by 1 in total", function () {
-                unique.childOfTestPlugin("methodA");
-                test.number(unique.childOfTestPlugin("getInstance").options.testNumber).is(5);
+        describe("jQuery('#unique').childOfTestPlugin0001('methodA')", function () {
+            it("should call `methodA` on the testPlugin0001 instance, causing the `testNumber` in the `options` member on the testPlugin0001 to be incremented by 1 in total", function () {
+                unique.childOfTestPlugin0001("methodA");
+                test.number(unique.childOfTestPlugin0001("getInstance").options.testNumber).is(5);
             });
         });
 
-        describe("jQuery('#unique').childOfTestPlugin('methodB', 2)", function () {
-            it("should call `methodB` on the testPlugin instance, causing the `testNumber` in the `options` member on the testPlugin to be decremented by 2", function () {
-                unique.childOfTestPlugin("methodB", 2);
-                test.number(unique.childOfTestPlugin("getInstance").options.testNumber).is(3);
+        describe("jQuery('#unique').childOfTestPlugin0001('methodB', 2)", function () {
+            it("should call `methodB` on the testPlugin0001 instance, causing the `testNumber` in the `options` member on the testPlugin0001 to be decremented by 2", function () {
+                unique.childOfTestPlugin0001("methodB", 2);
+                test.number(unique.childOfTestPlugin0001("getInstance").options.testNumber).is(3);
             });
         });
 
-        describe("jQuery('#unique').childOfTestPlugin('methodB')", function () {
-            it("should call `methodB` on the testPlugin instance, causing the `testNumber` in the `options` member on the testPlugin to be decremented by 1", function () {
-                unique.childOfTestPlugin("methodB");
-                test.number(unique.childOfTestPlugin("getInstance").options.testNumber).is(2);
+        describe("jQuery('#unique').childOfTestPlugin0001('methodB')", function () {
+            it("should call `methodB` on the testPlugin0001 instance, causing the `testNumber` in the `options` member on the testPlugin0001 to be decremented by 1", function () {
+                unique.childOfTestPlugin0001("methodB");
+                test.number(unique.childOfTestPlugin0001("getInstance").options.testNumber).is(2);
             });
         });
 
-        describe("jQuery('#unique').childOfTestPlugin('methodC')", function () {
-            it("should call `methodC` on the testPlugin instance, causing the `testNumber` in the `options` member on the testPlugin to be set to -100", function () {
-                unique.childOfTestPlugin("methodC");
-                test.number(unique.childOfTestPlugin("getInstance").options.testNumber).is(-100);
+        describe("jQuery('#unique').childOfTestPlugin0001('methodC')", function () {
+            it("should call `methodC` on the testPlugin0001 instance, causing the `testNumber` in the `options` member on the testPlugin0001 to be set to -100", function () {
+                unique.childOfTestPlugin0001("methodC");
+                test.number(unique.childOfTestPlugin0001("getInstance").options.testNumber).is(-100);
             });
         });
 
-        describe("jQuery('#unique').childOfTestPlugin('methodD')", function () {
-            it("should call `methodD` on the testPlugin instance, causing the `testNumber` in the `options` member on the testPlugin to be set to 10", function () {
-                unique.childOfTestPlugin("methodD", 1, 2, 3, 4);
-                test.number(unique.childOfTestPlugin("getInstance").options.testNumber).is(10);
+        describe("jQuery('#unique').childOfTestPlugin0001('methodD')", function () {
+            it("should call `methodD` on the testPlugin0001 instance, causing the `testNumber` in the `options` member on the testPlugin0001 to be set to 10", function () {
+                unique.childOfTestPlugin0001("methodD", 1, 2, 3, 4);
+                test.number(unique.childOfTestPlugin0001("getInstance").options.testNumber).is(10);
             });
         });
     });
