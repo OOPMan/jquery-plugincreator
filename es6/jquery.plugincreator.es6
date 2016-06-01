@@ -12,8 +12,8 @@
  * TODO: Add ability to not specify plugin name and have a randomly generated name assigned
  */
 
+import jQuery from "jQuery";
 import esprima from "esprima";
-import jQuery from "jquery";
 
 let $ = jQuery,
     noOp = jQuery.noop,
@@ -86,7 +86,7 @@ let $ = jQuery,
     },
     /**
      *
-     * @type {{addPlugin: addPlugin}}
+     * @type {{addPlugin: pluginCreator.addPlugin}}
      */
     pluginCreator = {
         /**
@@ -288,4 +288,6 @@ let $ = jQuery,
         }
     };
 
-export default pluginCreator;
+jQuery.extend(jQuery, pluginCreator);
+
+export default pluginCreator.addPlugin;

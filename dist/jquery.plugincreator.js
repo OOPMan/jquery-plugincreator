@@ -1,25 +1,25 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(["exports", "esprima", "jquery"], factory);
+        define(["exports", "jQuery", "esprima"], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require("esprima"), require("jquery"));
+        factory(exports, require("jQuery"), require("esprima"));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.esprima, global.jquery);
+        factory(mod.exports, global.jQuery, global.esprima);
         global.jqueryPlugincreator = mod.exports;
     }
-})(this, function (exports, _esprima, _jquery) {
+})(this, function (exports, _jQuery, _esprima) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
         value: true
     });
 
-    var _esprima2 = _interopRequireDefault(_esprima);
+    var _jQuery2 = _interopRequireDefault(_jQuery);
 
-    var _jquery2 = _interopRequireDefault(_jquery);
+    var _esprima2 = _interopRequireDefault(_esprima);
 
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
@@ -41,8 +41,8 @@
      * TODO: Add ability to not specify plugin name and have a randomly generated name assigned
      */
 
-    var $ = _jquery2.default,
-        noOp = _jquery2.default.noop,
+    var $ = _jQuery2.default,
+        noOp = _jQuery2.default.noop,
         scopeName = "jquery-plugincreator-",
 
     /**
@@ -115,7 +115,7 @@
 
     /**
      *
-     * @type {{addPlugin: addPlugin}}
+     * @type {{addPlugin: pluginCreator.addPlugin}}
      */
     pluginCreator = {
         /**
@@ -315,5 +315,7 @@
         }
     };
 
-    exports.default = pluginCreator;
+    _jQuery2.default.extend(_jQuery2.default, pluginCreator);
+
+    exports.default = pluginCreator.addPlugin;
 });
