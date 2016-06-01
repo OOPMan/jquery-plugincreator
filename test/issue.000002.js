@@ -2,13 +2,10 @@
  * Test for https://github.com/OOPMan/jquery-plugincreator/issues/2
  */
 "use strict";
-var test = require("unit.js"),
-    assert = test.assert,
-    common = require("./common.js");
 
 describe("issue000002", function () {
-    var window = common.getWindow(),
-        jQuery = common.getjQuery(window),
+    var test = unitjs,
+        assert = unitjs.assert,
         unique = jQuery("#unique"),
         nonUnique = jQuery(".non-unique"),
         defaults = {

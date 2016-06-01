@@ -20,8 +20,7 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
-    "jquery": ">=2.0.0",
-    "jsdom": ">=7.0.0",
+    "jquery": ">=1.9.0",
     "esprima": ">=1.2.2"
   },
   "devDependencies": {

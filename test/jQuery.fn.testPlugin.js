@@ -1,11 +1,8 @@
 "use strict";
-var test = require("unit.js"),
-    assert = test.assert,
-    common = require("./common.js");
 
 describe("jQuery.fn.testPlugin", function () {
-    var window = common.getWindow(),
-        jQuery = common.getjQuery(window),
+    var test = unitjs,
+        assert = unitjs.assert,
         unique = jQuery("#unique"),
         nonUnique = jQuery(".non-unique"),
         defaults = {
@@ -502,9 +499,5 @@ describe("jQuery.fn.testPlugin", function () {
                 });
             });
         });
-    });
-
-    after(function () {
-        window.close();
     });
 });

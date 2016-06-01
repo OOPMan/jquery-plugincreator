@@ -1,13 +1,10 @@
 "use strict";
-var test = require("unit.js"),
-    assert = test.assert,
-    common = require("./common.js");
 
 describe("jQuery.addPlugin", function () {
-    var window = common.getWindow(),
-        jQuery = common.getjQuery(window),
-        unique = jQuery("#unique");
-
+    var unique = jQuery("#unique"),
+        test = unitjs,
+        assert = unitjs.assert;
+    
     describe("Pre-flight checks", function () {
         it("jQuery.addPlugin should be a function", function() {
             test.function(jQuery.addPlugin);
@@ -123,10 +120,6 @@ describe("jQuery.addPlugin", function () {
                 unique.testPlugin("destroy");
             });
         });
-    });
-
-    after(function () {
-        window.close();
     });
 });
 

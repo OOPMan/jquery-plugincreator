@@ -4,13 +4,10 @@
  * _super method injection fails with functions expected to handle variable-length/optional argument lists
  */
 "use strict";
-var test = require("unit.js"),
-    assert = test.assert,
-    common = require("./common.js");
 
 describe("issue000001", function () {
-    var window = common.getWindow(),
-        jQuery = common.getjQuery(window),
+    var test = unitjs,
+        assert = unitjs.assert,
         unique = jQuery("#unique"),
         nonUnique = jQuery(".non-unique"),
         defaults = {
