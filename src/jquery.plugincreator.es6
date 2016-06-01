@@ -290,4 +290,4 @@ let $ = jQuery,
 
 jQuery.extend(jQuery, pluginCreator);
 
-export default pluginCreator.addPlugin;
+export default pluginCreator.addPlugin
