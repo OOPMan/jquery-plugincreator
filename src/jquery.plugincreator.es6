@@ -266,10 +266,11 @@ let $ = jQuery,
              *
              * @param {string} name
              * @param {string} newName
+             * @param {boolean} [alwaysInjectSuper=false]
              * @returns {string}
              */
-            $.fn[name].cloneTo = function (newName) {
-                return pluginCreator.addPlugin(newName, defaults, $.extend(true, [], members));
+            $.fn[name].cloneTo = function (newName, alwaysInjectSuper=false) {
+                return pluginCreator.addPlugin(newName, defaults, $.extend(true, [], members), alwaysInjectSuper);
             };
 
             /**
@@ -282,11 +283,12 @@ let $ = jQuery,
              * @param {string} name
              * @param {string} newName
              * @param {Object} [childMembers]
+             * @param {boolean} [alwaysInjectSuper=false]
              * @return {string}
              */
-            $.fn[name].extendTo = function (newName, childMembers) {
-                $.fn[name].cloneTo(newName);
-                $.fn[newName].extendMembersWith(childMembers);
+            $.fn[name].extendTo = function (newName, childMembers, alwaysInjectSuper=false) {
+                $.fn[name].cloneTo(newName, alwaysInjectSuper);
+                $.fn[newName].extendMembersWith(childMembers, alwaysInjectSuper);
             };
 
             return name;
