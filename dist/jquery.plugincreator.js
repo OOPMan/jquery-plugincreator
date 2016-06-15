@@ -68,11 +68,14 @@
      *
      * @param {function} childMember
      * @param {function} parentMember
+     * @param {boolean} [alwaysInjectSuper=false]
      * @returns {function}
      */
     parentWrapper = function parentWrapper(childMember, parentMember) {
+        var alwaysInjectSuper = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+
         var parentMember = parentMember == childMember ? noOp : parentMember,
-            childMemberExpectsSuper = isSuperParameterDefinedForFunction(childMember);
+            childMemberExpectsSuper = alwaysInjectSuper ? true : isSuperParameterDefinedForFunction(childMember);
 
         function parentGenerator(self) {
             var _super = parentMember;
@@ -94,16 +97,20 @@
      *
      * @param {Object} childMembers
      * @param {Object} parentMembers
-     * @param {Object} [self]
+     * @param {Object} [self=null]
+     * @param {boolean} [alwaysInjectSuper=false]
      * @returns {Object}
      */
-    wrapParents = function wrapParents(childMembers, parentMembers, self) {
+    wrapParents = function wrapParents(childMembers, parentMembers) {
+        var self = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+        var alwaysInjectSuper = arguments.length <= 3 || arguments[3] === undefined ? false : arguments[3];
+
         var childMembers = $.extend(true, {}, childMembers),
             parentMembers = $.extend(true, {}, parentMembers);
         for (var memberName in parentMembers) {
             if (childMembers[memberName]) {
                 if (typeof childMembers[memberName] == "function" && !childMembers[memberName]._isParentGenerator) {
-                    childMembers[memberName] = parentWrapper(childMembers[memberName], parentMembers[memberName]);
+                    childMembers[memberName] = parentWrapper(childMembers[memberName], parentMembers[memberName], alwaysInjectSuper);
                     if (self) childMembers[memberName] = childMembers[memberName](self);
                 }
             } else {
@@ -126,12 +133,17 @@
          * - An object defining member functions and values to be associated with a plugin instances prototype.
          *
          * @param {string} name
-         * @param {Object} [defaults]
-         * @param {Object} [members]
+         * @param {Object} [defaults={}]
+         * @param {Object} [members={}]
+         * @param {boolean} [alwaysInjectSuper=false]
          * @return {string}
          */
-        addPlugin: function addPlugin(name, defaults, members) {
-            var defaults = $.extend(true, {}, defaults || {}),
+        addPlugin: function addPlugin(name) {
+            var defaults = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+            var members = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+            var alwaysInjectSuper = arguments.length <= 3 || arguments[3] === undefined ? false : arguments[3];
+
+            var defaults = $.extend(true, {}, defaults),
                 baseMembers = {
                 /**
                  * Default init function. Does nothing.
@@ -155,10 +167,13 @@
                 /**
                  *
                  * @param {Object} members
+                 * @param {boolean} [alwaysInjectSuper=false]
                  * @returns {boolean}
                  */
                 extend: function extend(members) {
-                    $.extend(true, this, wrapParents(members, this, this));
+                    var alwaysInjectSuper = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+
+                    $.extend(true, this, wrapParents(members, this, this, alwaysInjectSuper));
                 },
                 /**
                  * Destructor function, performs the following:
@@ -172,7 +187,7 @@
                     this.context.trigger(scopeName + name + ".destroy").removeClass(scopeName + name).removeData(scopeName + name).removeAttr("data-" + scopeName + name);
                 }
             },
-                members = $.isArray(members) ? members : [wrapParents(members, wrapParents(baseMembers, baseMembers))];
+                members = $.isArray(members) ? members : [wrapParents(members, wrapParents(baseMembers, baseMembers, null, alwaysInjectSuper), null, alwaysInjectSuper)];
 
             /**
              * This function is used to instantiate an instance of the plugin on a given element.
@@ -275,10 +290,13 @@
             /**
              *
              * @param {Object} childMembers
+             * @param {boolean} [alwaysInjectSuper=false]
              * @returns {function}
              */
             $.fn[name].extendMembersWith = function (childMembers) {
-                members.unshift(wrapParents(childMembers, members[0]));
+                var alwaysInjectSuper = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+
+                members.unshift(wrapParents(childMembers, members[0], null, alwaysInjectSuper));
             };
 
             /**
