@@ -105,7 +105,7 @@ jQuery.addPlugin API
 
 jQuery PluginCreator extends the global jQuery object with the following function:
 
-**addPlugin(name, defaults, members)**
+**addPlugin(name, defaults={}, members={}, alwaysInjectSuper=false)**
 
 ---------
 addPlugin
@@ -155,14 +155,18 @@ function is called the value for **_super** will be automatically populated with
 by the called function, if such a overridden function exists. If not, then **_super** will be populated with a no-op and is
 thus safe to call anyway.
 
+As you may have guessed, a name-mangling JS compressor can interfere with the detection of **_super** parameter. In order
+to deal with this, either disable name-mangling for your compressor or alternatively make use of the **alwaysInjectSuper**
+parameter available for certain functions.
+
 Also note that jQuery PluginCreator provides five base functions for new plugins. These functions are:
 
 * **init()**, the base constructor function called after plugin instantiation is complete. The base version is a no-op.
 * **getInstance()**, allows for the plugin instance to be retrieved.
 * **update(options)**, allows for the values on the *options* member to be updated for a given plugin instance.
-* **extend(members)**, allows for the plugin instance members to be updated post-instantiation. The scope/inheritance
-  mechanism referred to above is applied to members supplied to this function, enabling access to overridden functions
-  to be maintained using the **_super** parameter.
+* **extend(members, alwaysInjectSuper=false)**, allows for the plugin instance members to be updated post-instantiation.
+  The scope/inheritance mechanism referred to above is applied to members supplied to this function, enabling access to
+  overridden functions to be maintained using the **_super** parameter.
 * **destroy()**, provides the plugin destructor function. If you override this method be sure to call **_super()** on
   the final line of your overriding function in order to ensure that plugin destruction is handled correctly.
 
@@ -186,6 +190,12 @@ Example:
         }
     };
 
+alwaysInjectSuper
+-----------------
+This parameter defaults to a value of **false**. When set to to **true** then the **_super** parameter will always
+be injected into members functions as the first parameter . This parameter is also present on a number of other
+functions documented here and behaved in exactly the same fashion everywhere.
+
 
 jQuery.fn.yourPlugin API
 ========================
@@ -197,9 +207,9 @@ The following functions are made available:
 * **jQuery.fn.NAME(options)**, the base plugin function which can be used to instantiate plugin instances or interact with existing plugin instances.
 * **jQuery.fn.NAME.defaults**, the *defaults* supplied to **addPlugin**
 * **jQuery.fn.NAME.updateDefaultsWith(options)**, a function that can be used to update the *defaults* supplied to **addPlugin**
-* **jQuery.fn.NAME.extendMembersWith(childMembers)**, a function that can be used to extend the *members* supplied to **addPlugin**
-* **jQuery.fn.NAME.cloneTo(newName)**, a function that can be used to clone the plugin as a new plugin while retaining the existing *defaults* and *members* configuration.
-* **jQuery.fn.NAME.extendTo(newName, childMembers)**, a function that can be used to clone the plugin as a new plugin, retaining the *defaults* configuration and optionally extending the *members* configuration.
+* **jQuery.fn.NAME.extendMembersWith(childMembers, alwaysInjectSuper=false)**, a function that can be used to extend the *members* supplied to **addPlugin**
+* **jQuery.fn.NAME.cloneTo(newName, alwaysInjectSuper=false)**, a function that can be used to clone the plugin as a new plugin while retaining the existing *defaults* and *members* configuration.
+* **jQuery.fn.NAME.extendTo(newName, childMembers, alwaysInjectSuper=false)**, a function that can be used to clone the plugin as a new plugin, retaining the *defaults* configuration and optionally extending the *members* configuration.
 
 ------------------------------
 jQuery.fn.NAME(options, *args)
