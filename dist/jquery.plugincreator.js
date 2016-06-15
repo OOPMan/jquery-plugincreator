@@ -306,10 +306,13 @@
              *
              * @param {string} name
              * @param {string} newName
+             * @param {boolean} [alwaysInjectSuper=false]
              * @returns {string}
              */
             $.fn[name].cloneTo = function (newName) {
-                return pluginCreator.addPlugin(newName, defaults, $.extend(true, [], members));
+                var alwaysInjectSuper = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+
+                return pluginCreator.addPlugin(newName, defaults, $.extend(true, [], members), alwaysInjectSuper);
             };
 
             /**
@@ -322,11 +325,14 @@
              * @param {string} name
              * @param {string} newName
              * @param {Object} [childMembers]
+             * @param {boolean} [alwaysInjectSuper=false]
              * @return {string}
              */
             $.fn[name].extendTo = function (newName, childMembers) {
-                $.fn[name].cloneTo(newName);
-                $.fn[newName].extendMembersWith(childMembers);
+                var alwaysInjectSuper = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+
+                $.fn[name].cloneTo(newName, alwaysInjectSuper);
+                $.fn[newName].extendMembersWith(childMembers, alwaysInjectSuper);
             };
 
             return name;
