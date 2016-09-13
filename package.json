@@ -4,7 +4,7 @@
   "description": "A jQuery add-on that makes creating plugins a little easier.",
   "main": "./src/jquery.plugincreator.es6",
   "scripts": {
-    "test": "x-www-browser test/tests.html",
+    "test": "babel test/*.es6 --presets es2015 --plugins transform-es2015-modules-umd --out-dir dist; x-www-browser test/tests.html",
     "build": "babel src --presets es2015 --plugins transform-es2015-modules-umd --out-dir dist"
   },
   "repository": {
