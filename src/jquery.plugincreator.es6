@@ -13,28 +13,6 @@ import $ from "jQuery";
 let scopeName = "jquery-plugincreator-",
     nameChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-// Returns a random integer between min (included) and max (excluded)
-// Using Math.round() will give you a non-uniform distribution!
-// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min)) + min;
-}
-
-/**
- * Generates a random 6 character function name for use with a jQuery unnamed
- * Plugin class
- *
- * @returns {string}
- */
-function generateRandomFnName() {
-    var name = "";
-    for (var i = 0; i < 6; i++) name += nameChars[getRandomInt(0, nameChars.length)];
-    if (typeof $.fn[name] !== "undefined") return generateRandomFnName();
-    return name;
-}
-
 /**
  * Error class for jQuery PluginCreator errors
  */
@@ -120,7 +98,7 @@ export class jQueryPlugin {
  *                             instance of pluginClass.
  */
 export default function addPlugin(pluginClass, defaults={}) {
-    let name = pluginClass.name ? pluginClass.name : generateRandomFnName();
+    let name = pluginClass.name;
 
     /**
      * A function to handle the actual process of instantiating a plugin instance or calling a method on
@@ -133,7 +111,8 @@ export default function addPlugin(pluginClass, defaults={}) {
      * @returns {*}
      */
     function processPluginCall(element, method, args) {
-        let instance = element.data(scopeName + name);
+        let $element = $(element),
+            instance = $element.data(scopeName + name);
         if (instance instanceof pluginClass) {
             if (typeof method == "string" && typeof instance[method] == "function") {
                 return instance[method](...args.slice(1));
@@ -143,7 +122,7 @@ export default function addPlugin(pluginClass, defaults={}) {
         } else if (typeof instance === "undefined") {
             let newInstance = new pluginClass(element, defaults, method);
             newInstance.init(...args);
-            element.data(scopeName + name, newInstance);
+            $element.data(scopeName + name, newInstance);
             return newInstance;
         } else {
             throw new jQueryPluginCreatorError("Namespace conflict on element");
@@ -183,3 +162,4 @@ export default function addPlugin(pluginClass, defaults={}) {
 }
 
 $.addPlugin = addPlugin;
+$.addPlugin.jQueryPlugin = jQueryPlugin;
