@@ -10,7 +10,30 @@
 
 import $ from "jQuery";
 
-let scopeName = "jquery-plugincreator-";
+let scopeName = "jquery-plugincreator-",
+    nameChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+// Returns a random integer between min (included) and max (excluded)
+// Using Math.round() will give you a non-uniform distribution!
+// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+/**
+ * Generates a random 6 character function name for use with a jQuery unnamed
+ * Plugin class
+ *
+ * @returns {string}
+ */
+function generateRandomFnName() {
+    var name = "";
+    for (var i = 0; i < 6; i++) name += nameChars[getRandomInt(0, nameChars.length)];
+    if (typeof $.fn[name] !== "undefined") return generateRandomFnName();
+    return name;
+}
 
 /**
  * Error class for jQuery PluginCreator errors
@@ -97,8 +120,7 @@ export class jQueryPlugin {
  *                             instance of pluginClass.
  */
 export default function addPlugin(pluginClass, defaults={}) {
-    // TODO: In the event pluginClass.name is undefined, generate a random name
-    let name = pluginClass.name;
+    let name = pluginClass.name ? pluginClass.name : generateRandomFnName();
 
     /**
      * A function to handle the actual process of instantiating a plugin instance or calling a method on
