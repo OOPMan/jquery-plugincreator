@@ -26,6 +26,10 @@ describe("jQuery.addPlugin", function () {
             test.function(jQuery.addPlugin).is(jQuery.addPlugin);
         });
 
+        it("jQuery.addPlugin.jQueryPlugin should be a function", function () {
+            test.function(jQuery.addPlugin.jQueryPlugin).is(jQuery.addPlugin.jQueryPlugin);
+        });
+
         it("jQuery('#unique') should contain a single item", function () {
             test.number(unique.length).is(1);
         });
@@ -55,6 +59,89 @@ describe("jQuery.addPlugin", function () {
         });
     });
 
+    describe("jQuery.addPlugin(testPlugin1, defaults)", function () {
+        class testPlugin1 extends jQuery.addPlugin.jQueryPlugin {}
 
+        it("should create jQuery.fn.testPlugin1", function () {
+            jQuery.addPlugin(testPlugin1, {
+                test: true
+            });
+            test.function(jQuery.fn.testPlugin1);
+        });
+
+        describe("jQuery('#unique').testPlugin1()", function () {
+            it("should instantiate testPlugin1 on #unique", function () {
+                unique.testPlugin1();
+            });
+            it("should make `defaults` available to the instance via the `options` member created during instantiation", function () {
+                var instance = unique.data("jquery-plugincreator-testPlugin1");
+                test.object(instance)
+                    .hasProperty("options")
+                    .object(instance.options)
+                    .hasProperty("test", true);
+            });
+            after(function () {
+                unique.testPlugin1("destroy");
+            });
+        });
+    });
+
+    describe("jQuery.addPlugin(testPlugin2)", function () {
+        class testPlugin2 extends jQuery.addPlugin.jQueryPlugin {
+            init() {
+                this.initCalled = true;
+                this.testValue = true;
+            }
+            testFunction1() {
+                this.testFunctionResult = true;
+            }
+            testFunction2(parameter) {
+                this.testFunctionResult = parameter;
+            }
+        }
+
+        it("should create jQuery.fn.testPlugin2", function () {
+            jQuery.addPlugin(testPlugin2);
+            test.function(jQuery.fn.testPlugin2);
+        });
+
+        describe("jQuery('#unique').testPlugin2()", function () {
+            it("should instantiate testPlugin2 on #unique", function () {
+                unique.testPlugin2();
+                this.instance = unique.data("jquery-plugincreator-testPlugin2");
+            });
+            it("should make `members` available to the instance via the prototype", function () {
+                test.object(this.instance)
+                        .hasProperty("testValue", true)
+                    .function(this.instance.testFunction1)
+                    .function(this.instance.testFunction2);
+            });
+            it("should call the `init` member on the instance if it exists", function () {
+                test.object(this.instance)
+                        .hasProperty("initCalled", true);
+            });
+        });
+
+        describe("jQuery('#unique').testPlugin2('testFunction1')", function () {
+            it("should set `testFunctionResult` on the instance to `true`", function () {
+                var instance = unique.data("jquery-plugincreator-testPlugin2");
+                unique.testPlugin2("testFunction1");
+                test.object(instance)
+                        .hasProperty("testFunctionResult", true);
+            });
+        });
+
+        describe("jQuery('#unique').testPlugin2('testFunction2', 'someValue')", function () {
+            it("should set `testFunctionResult` on the instance to `someValue`", function () {
+                var instance = unique.data("jquery-plugincreator-testPlugin2");
+                unique.testPlugin2("testFunction2", "someValue");
+                test.object(instance)
+                        .hasProperty("testFunctionResult", "someValue");
+            });
+            after(function () {
+                unique.testPlugin2("destroy");
+            });
+        });
+    });
 });
 
