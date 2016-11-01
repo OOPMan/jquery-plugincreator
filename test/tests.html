@@ -15,20 +15,23 @@
     </div>
 
     <script src="../node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="../node_modules/esprima/esprima.js"></script>
+    <script type="text/javascript">
+        window.jquery = window.jQuery;
+    </script>
     <script src="../dist/jquery.plugincreator.js"></script>
     <script src="../node_modules/unit.js/browser/dist/unit.js"></script>
+    <script type="text/javascript">
+        window.unit = window.unitjs;
+    </script>
     <script src="../node_modules/mocha/mocha.js"></script>
     <script type="text/javascript">
         mocha.setup('bdd');
     </script>
-    <script src="jQuery.addPlugin.js"></script>
-    <script src="jQuery.fn.testPlugin.js"></script>
-    <script src="issue.000001.js"></script>
-    <script src="issue.000002.js"></script>
+    <script src="../dist/test/jQuery.addPlugin.js"></script>
+    <script src="../dist/test/jQuery.fn.complexPlugin.js"></script>
     <script>
         mocha.checkLeaks();
-        mocha.globals(['_', 'jQuery', 'esprima', 'unitjs', 'jqueryPlugincreator']);
+        mocha.globals(['_', 'jQuery', 'unitjs']);
         mocha.run();
     </script>
 </body>
