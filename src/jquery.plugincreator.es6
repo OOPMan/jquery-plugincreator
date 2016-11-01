@@ -8,10 +8,9 @@
  *
  */
 
-import $ from "jQuery";
+import $ from "jquery";
 
-let scopeName = "jquery-plugincreator-",
-    nameChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+let scopeName = "jquery-plugincreator-";
 
 /**
  * Error class for jQuery PluginCreator errors
