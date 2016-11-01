@@ -1,5 +1,21 @@
-import jQuery from "jQuery";
-import test from "unitjs";
+/**
+ * You may be looking at these imports and going:
+ *
+ * "Hey, that's not right. jQuery comes from the 'jquery' NPM module while
+ *  Unit.JS comes from the 'unit.js' NPM module"
+ *
+ *  You are correct in thinking this and when using jQuery Plugin Creator in
+ *  a proper ES6 environment that supports modules (E.g. Webpack + Babel) you
+ *  should import stuff the right way.
+ *
+ *  In the case of these tests, however, the code is written such that it is
+ *  compatible with being run in a global browser environment. As the
+ *  babel-plugin-transform-es2015-modules-umd module does not allow for
+ *  customisation of the global imports it is thus
+ */
+import jQuery from "jquery";
+import addPlugin, {jQueryPlugin} from "../dist/jquery.plugincreator";
+import test from "unit.js";
 
 describe("jQuery.addPlugin", function () {
     var unique = jQuery("#unique"),
