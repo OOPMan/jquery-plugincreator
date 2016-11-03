@@ -1,15 +1,13 @@
 {
   "name": "jquery-plugincreator",
-  "version": "v1.0.0",
+  "version": "v2.0.0",
   "homepage": "https://github.com/OOPMan/jquery-plugincreator",
   "authors": [
     "Adam Jorgensen <adam.jorgensen.za@gmail.com>"
   ],
   "description": "A jQuery add-on that makes creating plugins a little easier.",
-  "main": "dist/jquery.plugincreator.js",
-  "moduleType": [
-    "amd", "globals", "es6"
-  ],
+  "main": "dist/jquery.plugincreator.es6",
+  "moduleType": ["es6"],
   "keywords": [
     "jquery",
     "plugin",
@@ -17,8 +15,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-      "jquery": ">=1.6.0",
-      "esprima": ">=1.2.2"
+      "jquery": ">=1.6.0"
   },
   "ignore": [
     "**/.*",

@@ -1,10 +1,10 @@
 {
   "name": "jquery-plugincreator",
-  "version": "v1.0.0",
+  "version": "v2.0.0",
   "description": "A jQuery add-on that makes creating plugins a little easier.",
-  "main": "./dist/jquery.plugincreator.js",
+  "main": "./src/jquery.plugincreator.es6",
   "scripts": {
-    "test": "x-www-browser test/tests.html",
+    "test": "babel src --presets es2015 --plugins transform-es2015-modules-umd --out-dir dist; babel test/*.es6 --presets es2015 --plugins transform-es2015-modules-umd --out-dir dist; x-www-browser test/tests.html",
     "build": "babel src --presets es2015 --plugins transform-es2015-modules-umd --out-dir dist"
   },
   "repository": {
@@ -12,16 +12,14 @@
     "url": "https://github.com/OOPMan/jquery-plugincreator"
   },
   "keywords": [
-    "jquery",
-    "plugin",
+    "jquery-plugin",
     "utility"
   ],
   "author": "Adam Jorgensen <adam.jorgensen.za@gmail.com>",
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
-    "jquery": ">=1.6.0",
-    "esprima": ">=1.2.2"
+    "jquery": ">=1.6.0"
   },
   "devDependencies": {
     "babel-cli": ">=6.9.0",

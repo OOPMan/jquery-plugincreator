@@ -1,5 +1,5 @@
 /*!
- * jQuery Plugin Creator 0.3.0
+ * jQuery Plugin Creator v2.0.0
  * https://github.com/OOPMan/jquery-plugin-creator
  *
  * Copyright 2014 Adam Jorgensen
@@ -7,294 +7,159 @@
  * http://github.com/OOPMan/jquery-plugin-creator/LICENSE
  *
  */
+
+import $ from "jquery";
+
+let scopeName = "jquery-plugincreator-";
+
 /**
- * TODO: Add checks to prevent over-writing plugins
- * TODO: Add ability to not specify plugin name and have a randomly generated name assigned
+ * Error class for jQuery PluginCreator errors
  */
+export class jQueryPluginCreatorError extends Error {
+    constructor(message, error) {
+        super(message);
+        this.message = message;
+        this.error = error;
+        this.name = "jQueryPluginCreatorError";
+    }
+}
 
-import jQuery from "jQuery";
-import esprima from "esprima";
-
-let $ = jQuery,
-    noOp = jQuery.noop,
-    scopeName = "jquery-plugincreator-",
+/**
+ * Base class for jQuery Plugins managed by jQuery Plugin Creator. If you want
+ * to write a plugin that is compatible with this tool then this is the class
+ * you need to extend.
+ */
+export class jQueryPlugin {
     /**
-     * Given a function parameter name and a function, determines whether the function in question accepts the
-     * named parameter.
+     * The constructor handles set-up of the plugin instance. Rather than
+     * overriding this function to perform plugin instance setup, you should
+     * override the init function as it will be called automatically with any
+     * additional parameters you passed in once the core work of setting up
+     * the plugin instance has been done.
      *
-     * As this function is used internally to detect whether a function defines the _super parameter and given
-     * that the _super parameter will always be the last parameter IF it is defined, the search is restricted
-     * to the very last parameter defined for a given function.
-     *
-     * @param {function} inputFunction
-     * @returns {boolean}
+     * @param {Element} element
+     * @param {Object}     defaults
+     * @param {Object}     options
      */
-    isSuperParameterDefinedForFunction = function (inputFunction) {
-        var inputFunctionAST = esprima.parse("f = " + inputFunction.toString()),
-            inputFunctionParams = inputFunctionAST.body[0].expression.right.params,
-            firstInputFunctionParam = inputFunctionParams.shift();
-        if (typeof firstInputFunctionParam == "undefined") return false;
-        return firstInputFunctionParam.name == "_super";
-    },
+    constructor(element, defaults={}, options={}) {
+        this.element = element;
+        this.context = $(element).addClass(scopeName + this.constructor.name);
+        this.options = Object.assign({}, defaults, options);
+    }
+
     /**
-     *
-     * @param {function} childMember
-     * @param {function} parentMember
-     * @param {boolean} [alwaysInjectSuper=false]
-     * @returns {function}
+     * Called once the constructor is done and the base plugin instance has
+     * been configured. Receives the arguments passed into the the jQuery
+     * plugin call the constructs the plugin instance.
      */
-    parentWrapper = function (childMember, parentMember, alwaysInjectSuper=false) {
-        var parentMember = (parentMember == childMember ? noOp : parentMember),
-            childMemberExpectsSuper = alwaysInjectSuper ? true : isSuperParameterDefinedForFunction(childMember);
+    init() { }
 
-        function parentGenerator(self) {
-            var _super = parentMember;
-            if (_super._isParentGenerator) _super = _super(self);
-            else _super = function () {
-                return parentMember.apply(self, arguments);
-            };
-            return function () {
-                var args = $.makeArray(arguments);
-                if (childMemberExpectsSuper) args.unshift(_super);
-                return childMember.apply(self, args);
-            };
-        }
-
-        parentGenerator._isParentGenerator = true;
-        return parentGenerator;
-    },
     /**
+     * This helper function can be called to return a reference to the
+     * plugin instance.
      *
-     * @param {Object} childMembers
-     * @param {Object} parentMembers
-     * @param {Object} [self=null]
-     * @param {boolean} [alwaysInjectSuper=false]
      * @returns {Object}
      */
-    wrapParents = function (childMembers, parentMembers, self=null, alwaysInjectSuper=false) {
-        var childMembers = $.extend(true, {}, childMembers),
-            parentMembers = $.extend(true, {}, parentMembers);
-        for (var memberName in parentMembers) {
-            if (childMembers[memberName]) {
-                if (typeof childMembers[memberName] == "function" && !childMembers[memberName]._isParentGenerator) {
-                    childMembers[memberName] = parentWrapper(childMembers[memberName], parentMembers[memberName], alwaysInjectSuper);
-                    if (self) childMembers[memberName] = childMembers[memberName](self);
-                }
-            } else {
-                childMembers[memberName] = parentMembers[memberName];
-            }
-        }
-        return childMembers;
-    },
+    getInstance() {
+        return this;
+    }
+
     /**
+     * Update the options parameters associated with the class.
      *
-     * @type {{addPlugin: pluginCreator.addPlugin}}
+     * @param {Object} options
+     * @returns {Object}
      */
-    pluginCreator = {
-        /**
-         * Adds a new stateful plugin to jQuery.
-         *
-         * A stateful plugin consists of the following optional components:
-         * - An object defining default properties to be associated with a plugin instance via its options member
-         * - An object defining member functions and values to be associated with a plugin instances prototype.
-         *
-         * @param {string} name
-         * @param {Object} [defaults={}]
-         * @param {Object} [members={}]
-         * @param {boolean} [alwaysInjectSuper=false]
-         * @return {string}
-         */
-        addPlugin: function (name, defaults={}, members={}, alwaysInjectSuper=false) {
-            var defaults = $.extend(true, {}, defaults),
-                baseMembers = {
-                    /**
-                     * Default init function. Does nothing.
-                     */
-                    init: noOp,
-                    /**
-                     *
-                     * @returns {Object}
-                     */
-                    getInstance: function () {
-                        return this;
-                    },
-                    /**
-                     *
-                     * @param {Object} [options]
-                     * @returns {Object}
-                     */
-                    update: function (options) {
-                        $.extend(true, this.options, options || {});
-                    },
-                    /**
-                     *
-                     * @param {Object} members
-                     * @param {boolean} [alwaysInjectSuper=false]
-                     * @returns {boolean}
-                     */
-                    extend: function (members, alwaysInjectSuper=false) {
-                        $.extend(true, this, wrapParents(members, this, this, alwaysInjectSuper));
-                    },
-                    /**
-                     * Destructor function, performs the following:
-                     *
-                     * 1: Triggers a scopeName + name + ".destroy" (E.g. "jquery-plugincreator-myPlugin.destroy") event on the jQuery context (I.e. $(this) ) for the plugin instance.
-                     * 2: Removes the scopeName + name (E.g. "jquery-plugincreator-myPlugin") class from the element linked to the plugin instance.
-                     * 3: Removes the scopeName + name (E.g. "jquery-plugincreator-myPlugin") data value from the element linked to the plugin instance.
-                     * 4: Removes the "data-" + scopeName + name (E.g. "data-jquery-plugincreator-myPlugin") attribute from the element linked to the plugin instance.
-                     */
-                    destroy: function () {
-                        this.context
-                            .trigger(scopeName + name + ".destroy")
-                            .removeClass(scopeName + name)
-                            .removeData(scopeName + name)
-                            .removeAttr("data-" + scopeName + name);
-                    }
-                },
-                members = $.isArray(members) ? members : [wrapParents(members, wrapParents(baseMembers, baseMembers, null, alwaysInjectSuper), null, alwaysInjectSuper)];
+    update(options) {
+        return $.extend(true, this.options, options);
+    }
 
-            /**
-             * This function is used to instantiate an instance of the plugin on a given element.
-             *
-             * @param {Object} element
-             * @param {Object} [options]
-             * @param {Array} [initArguments]
-             */
-            function instantiatePlugin(element, options, initArguments) {
-                var options = options || {},
-                    prototype = $.extend(true, {}, members[0]),
-                    instance = null;
+    /**
+     * Destructor class that should be called to detach the plugin instance
+     * from the DOM element it is associated with.
+     */
+    destroy() {
+        this.context
+            .trigger(`${scopeName}${this.constructor.name}.destroy`)
+            .removeClass(scopeName + this.constructor.name)
+            .removeData(scopeName + this.constructor.name)
+            .removeAttr(`data-${scopeName}${this.constructor.name}`);
+    }
+}
 
-                function pluginConstructor() {
-                    this.instanceOf = name;
-                    this.element = element;
-                    this.context = $(element).addClass(scopeName + name);
-                    this.options = $.extend(true, {}, defaults, options);
-                    for (var memberName in prototype) {
-                        if (typeof prototype[memberName] == "function" && prototype[memberName]._isParentGenerator) {
-                            prototype[memberName] = prototype[memberName](this);
-                        }
-                    }
-                    $.extend(true, this, prototype);
-                    this.init.apply(this, initArguments);
-                }
+/**
+ * Adds a new stateful plugin to jQuery.
+ *
+ * @param {Class}  pluginClass An ES6 class the inherits from the jQueryPlugin
+ *                             class exported by this module.
+ * @param {Object} [defaults]  An optional plain object that defines the default
+ *                             values to be placed in the options field on an
+ *                             instance of pluginClass.
+ */
+export default function addPlugin(pluginClass, defaults={}) {
+    let name = pluginClass.name;
 
-                instance = new pluginConstructor();
-                $.data(element, scopeName + name, instance);
-                return instance;
+    /**
+     * A function to handle the actual process of instantiating a plugin instance or calling a method on
+     * a given plugin instance.
+     *
+     * @param {object}        element          DOM Element
+     * @param {string|object} method           Potentially a string, otherwise ignored
+     * @param {Array}         args             Array of arguments, includes the value
+     *                                         the for method parameter
+     * @returns {*}
+     */
+    function processPluginCall(element, method, args) {
+        let $element = $(element),
+            instance = $element.data(scopeName + name);
+        if (instance instanceof pluginClass) {
+            if (typeof method == "string" && typeof instance[method] == "function") {
+                return instance[method](...args);
+            } else {
+                throw new jQueryPluginCreatorError(`${method} is not a member of ${element}`);
             }
-
-            /**
-             * A function to handle the actual process of instantiating a plugin instance or calling a method on
-             * a given plugin instance.
-             *
-             * @param {Object} self
-             * @param {Object|String} options
-             * @param {Array} args
-             * @returns {*}
-             */
-            function processPluginCall(self, options, args) {
-                var instance = $.data(self, scopeName + name);
-                if (instance) {
-                    if (typeof options == "string" && typeof instance[options] == "function") { // call a method on the instance
-                        return instance[options].apply(instance, args.slice(1));
-                    } else if (typeof instance.update == "function" && $.isPlainObject(options)) { // call update on the instance
-                        return instance.update.apply(instance, args);
-                    } else {
-                        throw options + " is not a member of " + self;
-                    }
-                } else {
-                    return instantiatePlugin(self, options, args.slice(1));
-                }
-            }
-
-            /**
-             *
-             * @param {Object|string} options
-             * @returns {jQuery}
-             */
-            $.fn[name] = function (options) {
-                var args = $.makeArray(arguments),
-                    result = this;
-                if (this.length === 1) {
-                    result = processPluginCall(this[0], options, args);
-                } else {
-                    if (options === "map") {
-                        result = this.map(function () {
-                            return processPluginCall(this, args[1], args.slice(2));
-                        });
-                    } else {
-                        result = this.each(function () {
-                            processPluginCall(this, options, args);
-                        });
-                    }
-                }
-                if (typeof result == "undefined") result = this;
-                return result;
-            };
-
-            /**
-             *
-             * @type {Object}
-             */
-            $.fn[name].defaults = defaults;
-
-            /**
-             *
-             * @param {Object} options
-             * @returns {Object}
-             */
-            $.fn[name].updateDefaultsWith = function (options) {
-                $.extend(true, defaults, options);
-                return defaults;
-            };
-
-            /**
-             *
-             * @param {Object} childMembers
-             * @param {boolean} [alwaysInjectSuper=false]
-             * @returns {function}
-             */
-            $.fn[name].extendMembersWith = function (childMembers, alwaysInjectSuper=false) {
-                members.unshift(wrapParents(childMembers, members[0], null, alwaysInjectSuper));
-            };
-
-            /**
-             * Clones a plugin added using jQuery PluginCreator.
-             *
-             * While the defaults and members are cloned completely and are independent, the constructor is shared.
-             *
-             * @param {string} name
-             * @param {string} newName
-             * @param {boolean} [alwaysInjectSuper=false]
-             * @returns {string}
-             */
-            $.fn[name].cloneTo = function (newName, alwaysInjectSuper=false) {
-                return pluginCreator.addPlugin(newName, defaults, $.extend(true, [], members), alwaysInjectSuper);
-            };
-
-            /**
-             * Extends a plugin added using jQuery PluginCreator.
-             *
-             * Defaults and members are cloned and extended from the original plugin while the extended constructor
-             * functions such that the constructor for the original plugin is called first, then new new
-             * constructor, if present.
-             *
-             * @param {string} name
-             * @param {string} newName
-             * @param {Object} [childMembers]
-             * @param {boolean} [alwaysInjectSuper=false]
-             * @return {string}
-             */
-            $.fn[name].extendTo = function (newName, childMembers, alwaysInjectSuper=false) {
-                $.fn[name].cloneTo(newName, alwaysInjectSuper);
-                $.fn[newName].extendMembersWith(childMembers, alwaysInjectSuper);
-            };
-
-            return name;
+        } else if (typeof instance === "undefined") {
+            let options = typeof method == "object" ? method : {},
+                newInstance = new pluginClass(element, defaults, options);
+            newInstance.init(...args);
+            $element.data(scopeName + name, newInstance);
+            return newInstance;
+        } else {
+            throw new jQueryPluginCreatorError("Namespace conflict on element");
         }
+    }
+
+    /**
+     * TODO: Document
+     *
+     * @param {string|object} stringOrObject
+     * @returns {jQuery|*}
+     */
+    $.fn[name] = function (stringOrObject) {
+        var args = $.makeArray(arguments),
+            result = this;
+        if (this.length === 1) {
+            result = processPluginCall(this[0], stringOrObject, args.slice(1));
+        } else {
+            if (stringOrObject === "map") {
+                result = this.map(function () {
+                    return processPluginCall(this, args[1], args.slice(2));
+                });
+            } else {
+                result = this.each(function () {
+                    processPluginCall(this, stringOrObject, args.slice(1));
+                });
+            }
+        }
+        if (typeof result === "undefined") result = this;
+        return result;
     };
 
-jQuery.extend(jQuery, pluginCreator);
+    $.fn[name].defaults = defaults;
+    $.fn[name].pluginClass = pluginClass;
 
-export default pluginCreator.addPlugin
+    return name;
+}
+
+$.addPlugin = addPlugin;
+$.addPlugin.jQueryPlugin = jQueryPlugin;
