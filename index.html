@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="jQuery PluginCreator : A jQuery add-on that makes creating plugins a little easier.">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>jQuery PluginCreator</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/OOPMan/jquery-plugincreator">View on GitHub</a>
+
+          <h1 id="project_title">jQuery PluginCreator</h1>
+          <h2 id="project_tagline">A jQuery add-on that makes creating plugins a little easier.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/OOPMan/jquery-plugincreator/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/OOPMan/jquery-plugincreator/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="jquery-plugincreator-v200" class="anchor" href="#jquery-plugincreator-v200" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>jQuery PluginCreator v2.0.0</h1>
+
+<p>A jQuery plugin for creating stateful, extensible jQuery plugins using ES6</p>
+
+<h2>
+<a id="contents" class="anchor" href="#contents" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contents</h2>
+
+<ol>
+<li>Introduction</li>
+<li>Why v2.x?</li>
+<li>Requirements</li>
+<li>Usage</li>
+<li>The jQuery.addPlugin API</li>
+<li>The jQuery.fn.yourPlugin API</li>
+<li>The jQueryPlugin class</li>
+<li>Tests</li>
+</ol>
+
+<h2>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction</h2>
+
+<p>jQuery PluginCreator is a small JavaScript library that can be used in 
+conjunction with jQuery to easily create jQuery plugins.</p>
+
+<p>Creating a plugin with PluginCreator is pretty easy, you simply implement 
+your plugin as an ES6 class extending the <code>jQueryPlugin</code> class exported 
+by PluginCreator. PluginCreator creates a new jQuery plugin function that 
+can be executed against jQuery selections to instantiate the class against 
+selected elements.</p>
+
+<p>Plugins created using PluginCreator can also be extended using standard 
+ES6 inheritance semantics to implement new plugins that extend functionality 
+in the base plugin.</p>
+
+<h2>
+<a id="why-v2x" class="anchor" href="#why-v2x" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Why v2.x?</h2>
+
+<p>v2.x of jQuery PluginCreator was initiated in order to simplify the project
+and leverage the simplified inheritance scheme provided by ES6. </p>
+
+<p>v1.x implemented a custom single-inheritance scheme along with a number 
+of additional features that allowed for some more complex behaviours including 
+post-definition patching of plugin members and plugin instance members. 
+This scheme was implemented using the <code>esprima</code> library and, as a whole, 
+worked fairly well. It has seen production usage and generally does the 
+job, albeit with a few caveats.</p>
+
+<p>Going forward, however, the desire was to reduce the amount of custom 
+implementation code and capacity to engage in <em>funny business</em> while also 
+bringing the project as a whole closer to the ES6 way of doing things.
+Thus, v2.x was born.</p>
+
+<h2>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h2>
+
+<p>jQuery PluginCreator can be used in any of the following JavaScript environments:</p>
+
+<ul>
+<li>Browser</li>
+<li>Browser + AMD (RequireJS, curl.js, etc)</li>
+<li>Browser + CommonJS</li>
+<li>Browser + ES6 Modules</li>
+</ul>
+
+<p>In order to make use of jQuery PluginCreator you will need jQuery. For a
+browser environment, any recent version should do the trick.</p>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+
+<h4>
+<a id="browser" class="anchor" href="#browser" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Browser</h4>
+
+<div class="highlight highlight-text-html-basic"><pre>
+&lt;<span class="pl-ent">html</span>&gt;
+&lt;<span class="pl-ent">head</span>&gt;
+&lt;<span class="pl-ent">script</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>text/javascript<span class="pl-pds">"</span></span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>jquery.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;
+&lt;<span class="pl-ent">script</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>text/javascript<span class="pl-pds">"</span></span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>jquery.plugincreator.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;
+<span class="pl-s1">&lt;<span class="pl-ent">script</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>text/javascript<span class="pl-pds">"</span></span>&gt;</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">class</span> <span class="pl-en">myPlugin</span> <span class="pl-k">extends</span> <span class="pl-e">$</span>.<span class="pl-smi">addPlugin</span>.<span class="pl-smi">jQueryPlugin</span> {</span>
+<span class="pl-s1">    <span class="pl-en">member1</span>() {</span>
+<span class="pl-s1">        <span class="pl-c">// Do something</span></span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1">}</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$</span>.<span class="pl-en">addPlugin</span>(myPlugin, {</span>
+<span class="pl-s1">    defaultSomething1<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>a string<span class="pl-pds">"</span></span>,</span>
+<span class="pl-s1">    defaultSomething2<span class="pl-k">:</span> <span class="pl-c1">10</span></span>
+<span class="pl-s1">});</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">&lt;/<span class="pl-ent">script</span>&gt;</span>
+&lt;/<span class="pl-ent">head</span>&gt;
+&lt;<span class="pl-ent">body</span>&gt;
+&lt;/<span class="pl-ent">body</span>&gt;
+&lt;/<span class="pl-ent">html</span>&gt;
+</pre></div>
+
+<h4>
+<a id="browser--amd" class="anchor" href="#browser--amd" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Browser + AMD</h4>
+
+<div class="highlight highlight-source-js"><pre>
+<span class="pl-en">define</span>([<span class="pl-s"><span class="pl-pds">"</span>jquery<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>jquery.plugincreator<span class="pl-pds">"</span></span>], <span class="pl-k">function</span> (<span class="pl-smi">$</span>, <span class="pl-smi">pluginCreator</span>) {
+    <span class="pl-k">class</span> <span class="pl-en">myPlugin</span> <span class="pl-k">extends</span> <span class="pl-e">pluginCreator</span>.<span class="pl-smi">jQueryPlugin</span> {
+        <span class="pl-en">member1</span>() {
+            <span class="pl-c">// Do something</span>
+        }
+    }
+
+    <span class="pl-smi">$</span>.<span class="pl-en">addPlugin</span>(myPlugin, {
+        defaultSomething1<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>a string<span class="pl-pds">"</span></span>,
+        defaultSomething2<span class="pl-k">:</span> <span class="pl-c1">10</span>
+    });
+}
+</pre></div>
+
+<h4>
+<a id="browser--commonjs" class="anchor" href="#browser--commonjs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Browser + CommonJS</h4>
+
+<div class="highlight highlight-source-js"><pre>
+<span class="pl-k">var</span> $ <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">"</span>jquery<span class="pl-pds">"</span></span>),
+    pluginCreator <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">"</span>jquery.plugincreator<span class="pl-pds">"</span></span>);
+
+<span class="pl-k">class</span> <span class="pl-en">myPlugin</span> <span class="pl-k">extends</span> <span class="pl-e">pluginCreator</span>.<span class="pl-smi">jQueryPlugin</span> {
+    <span class="pl-en">member1</span>() {
+        <span class="pl-c">// Do something</span>
+    }
+}
+
+<span class="pl-smi">$</span>.<span class="pl-en">addPlugin</span>(myPlugin, {
+    defaultSomething1<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>a string<span class="pl-pds">"</span></span>,
+    defaultSomething2<span class="pl-k">:</span> <span class="pl-c1">10</span>
+});   
+</pre></div>
+
+<h4>
+<a id="browser--es6-modules" class="anchor" href="#browser--es6-modules" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Browser + ES6 Modules</h4>
+
+<div class="highlight highlight-source-js"><pre>
+<span class="pl-k">import</span> <span class="pl-smi">addPlugin</span>, { <span class="pl-smi">jQueryPlugin</span> } <span class="pl-k">from</span> <span class="pl-s"><span class="pl-pds">"</span>jquery.plugincreator<span class="pl-pds">"</span></span>;
+
+<span class="pl-k">class</span> <span class="pl-en">myPlugin</span> <span class="pl-k">extends</span> <span class="pl-e">pluginCreator</span>.<span class="pl-smi">jQueryPlugin</span> {
+    <span class="pl-en">member1</span>() {
+        <span class="pl-c">// Do something</span>
+    }
+}
+
+<span class="pl-en">addPlugin</span>(myPlugin, {
+    defaultSomething1<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>a string<span class="pl-pds">"</span></span>,
+    defaultSomething2<span class="pl-k">:</span> <span class="pl-c1">10</span>
+});   
+</pre></div>
+
+<h2>
+<a id="the-jqueryaddplugin-api" class="anchor" href="#the-jqueryaddplugin-api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The jQuery.addPlugin API</h2>
+
+<p>jQuery PluginCreator extends the global jQuery object with the following function:</p>
+
+<h5>
+<a id="addpluginpluginclass-defaults" class="anchor" href="#addpluginpluginclass-defaults" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>addPlugin(pluginClass, defaults={})</h5>
+
+<p>The addPlugin function accepts two parameters, one of which is optional.</p>
+
+<p>The first parameter must be a class that inherits from the <em>jQueryPlugin</em>
+class, the second is an optional plain object of default values to be
+available on the <code>options</code> member of instances of the class plugin.</p>
+
+<p>When called, addPlugin generates a new function attached to the
+<code>jQuery.fn</code> object. This function is attached using the <code>name</code> property
+provided by the plugin class. Thus, a plugin class defined as 
+<code>class myPlugin extends jQueryPlugin {}</code> will be bound to <code>jQuery.fn.myPlugin</code>
+when passed in to the <code>addPlugin</code> function.</p>
+
+<h5>
+<a id="addpluginjqueryplugin" class="anchor" href="#addpluginjqueryplugin" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>addPlugin.jQueryPlugin</h5>
+
+<p>To aid development in environments that don't support ES6 modules, the
+<code>jQueryPlugin</code> class is also made available as a property of the <code>addPlugin</code>
+function that is bound to <code>jQuery</code>.</p>
+
+<h2>
+<a id="the-jqueryfnyourplugin-api" class="anchor" href="#the-jqueryfnyourplugin-api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The jQuery.fn.yourPlugin API</h2>
+
+<p>Once the <code>jQuery.addPlugin</code> function has been used to attach a new plugin, 
+that plugin can be accessed as normal using the <code>jQuery.fn.NAME</code> object 
+and applied to jQuery selections using the standard <code>jQuery("selector").NAME()</code> 
+method:</p>
+
+<h5>
+<a id="jqueryfnnameoptions-args" class="anchor" href="#jqueryfnnameoptions-args" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>jQuery.fn.NAME(options, ...args)</h5>
+
+<h6>
+<a id="options" class="anchor" href="#options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>options</h6>
+
+<p>A <code>string</code> or plain <code>object</code>.</p>
+
+<h6>
+<a id="args" class="anchor" href="#args" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>args</h6>
+
+<p>Additional parameters may be passed to <code>jQuery.fn.NAME</code> and will be passed on to the plugin processing logic and
+from there to any plugin instance member functions or constructors called.</p>
+
+<h6>
+<a id="function-behaviour" class="anchor" href="#function-behaviour" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Function behaviour</h6>
+
+<p>The base plugin function which can be used  to instantiate plugin 
+instances or interact with existing plugin instances.</p>
+
+<p>When <code>jQuery.fn.NAME</code> is called on a given jQuery selection it does the following:</p>
+
+<ol>
+<li>If the selection contains exactly 1 element, it returns the result of
+executing the plugin processing logic on that element. This allows a 
+call to like <code>jQuery("#your-element").yourPlugin("getInstance")</code> to 
+work as expected. In instance where a call like <code>jQuery("#your-element").yourPlugin("yourMethod")</code> 
+would return no value or return the <code>undefined</code> value then the return 
+value will be the jQuery selection, preserving the jQuery chaining effect.</li>
+<li>
+<p>If the selection does not contain exactly 1 element and...</p>
+
+<p>a. <code>options === "map"</code>, it applies the plugin processing logic to the 
+  selection using the <code>map</code> operation, returning 
+  the resultant selection. This output selection can be converted to 
+  a standard <code>Array</code> by applying the <code>get</code> operation on the selection.
+  When applying the plugin processing logic the initial <code>options</code> value 
+  of <code>"map"</code> is discarded. The next argument is considered to be the 
+  <code>options</code> value and any further arguments are treated as additional parameters.</p>
+
+<p>b. <code>options !== "map"</code>, it applies the plugin processing logic to the 
+  selection using the <code>each</code> operation, returning the selection as expected.</p>
+</li>
+</ol>
+
+<p>The plugin processing logic does the following:</p>
+
+<ol>
+<li>Attempt to retrieve plugin instance associated with input element.</li>
+<li>If an instance is found and <code>options</code> is a <code>string</code> and <code>instance[options]</code>
+is a function, treat the call to <code>jQuery.fn.NAME</code> as an attempt to call 
+a member function on the plugin instance. The member function, <code>instance.[options]</code> 
+is called and any additional parameters supplied to <code>jQuery.fn.NAME</code> 
+will be passed to the member function being called. If <code>options</code> is not
+a <code>string</code> or <code>instance[options]</code> is not a function, a <code>jQueryPluginCreatorError</code>
+exception will be thrown.</li>
+<li>If no instance is found, instantiate a plugin instance on the element 
+using the contents of the <code>options</code> parameter to override values supplied 
+by <code>jQuery.fn.NAME.defaults</code> to the plugin instance. Additionally, any 
+additional parameters supplied to <code>jQuery.fn.NAME</code> will be passed in 
+to the <code>init</code> member function of the plugin instance. The plugin instance
+is associated with its parent element using a data attribute of the form 
+<code>data-jquery-plugincreator-NAME</code>. The instantiated plugin is returned, 
+allowing plugin instantiation on single-element selections to be used for assignments.</li>
+</ol>
+
+<h5>
+<a id="jqueryfnnamedefaults" class="anchor" href="#jqueryfnnamedefaults" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>jQuery.fn.NAME.defaults</h5>
+
+<p>The <code>defaults</code> supplied to <code>addPlugin</code>. This is exposed in order to allow
+the key-value pairs stored to manipulated.</p>
+
+<h2>
+<a id="the-jqueryplugin-class" class="anchor" href="#the-jqueryplugin-class" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The jQueryPlugin class</h2>
+
+<p>The jQueryPlugin class provides a base for stateful jQuery Plugins. The
+following methods are provided by the jQueryPlugin class:</p>
+
+<h5>
+<a id="constructorelement-defaults-options" class="anchor" href="#constructorelement-defaults-options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>constructor(element, defaults={}, options={})</h5>
+
+<p>The default constructor performs a number of important set-up tasks
+for a plugin instance. </p>
+
+<p>It binds <code>this.element</code> to <code>element</code>, <code>this.context</code> to <code>jQuery(element)</code> 
+and <code>this.options</code> to the result of mering <code>options</code> over <code>defaults</code>.</p>
+
+<p>While it is possible to override the <code>constructor</code> method, it is not
+recommended. Rather, implement your initialization code in the <code>init</code>
+method. If you must override <code>constructor</code>, ensure you call the 
+ancestor <code>constructor</code> to preserve initialisation behaviour.</p>
+
+<h5>
+<a id="init" class="anchor" href="#init" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>init()</h5>
+
+<p>The default <code>init</code> method does nothing. If you wish to perform
+custom initialization it should be implemented by overriding this
+method. </p>
+
+<p>Although the default method accepts no parameters you can provide
+ones when you override it. </p>
+
+<h5>
+<a id="getinstance" class="anchor" href="#getinstance" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>getInstance()</h5>
+
+<p>The <code>getInstance</code> method exists in order to allow for jQuery usage
+such as <code>let pluginInstance = jQuery("#something").myPlugin("getInstance")</code>.</p>
+
+<h5>
+<a id="updateoptions" class="anchor" href="#updateoptions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>update(options)</h5>
+
+<p>This method can be used to updated the data stored in <code>this.options</code> for
+a plugin instance. The <code>jQuery.extend</code> function is used to perform this
+update with the recursive merge option enabled.</p>
+
+<h5>
+<a id="destroy" class="anchor" href="#destroy" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>destroy()</h5>
+
+<p>The <code>destroy</code> method is essentially a destructor, albeit one that needs
+to be manually called. The default implementation does the following:</p>
+
+<ol>
+<li>Triggers an event named <code>jquery-plugincreator-NAME.destroy</code> on <code>this.context</code>
+</li>
+<li>Removes the <code>jquery-plugincreator-NAME</code> class on <code>this.element</code>
+</li>
+<li>Removes the <code>jquery-plugincreator-NAME</code> data associated with <code>this.element</code>
+</li>
+<li>Removes the <code>data-jquery-plugincreator-NAME</code> attribute on <code>this.element</code> </li>
+</ol>
+
+<p>If you override this method, you should ensure you call through to the
+ancestor <code>destroy</code> function to ensure it the method continues behave as
+expected by users.</p>
+
+<h2>
+<a id="tests" class="anchor" href="#tests" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tests</h2>
+
+<p>In order to run the tests you will need to checkout the project source,
+execute <code>npm install</code> in the source root and then run <code>npm run-script test</code>.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">jQuery PluginCreator maintained by <a href="https://github.com/OOPMan">OOPMan</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
