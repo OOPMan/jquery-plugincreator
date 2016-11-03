@@ -205,7 +205,7 @@
          * a given plugin instance.
          *
          * @param {Object} element          DOM Element
-         * @param {*}      method           Potential a string, otherwise ignored
+         * @param {*}      method           Potentially a string, otherwise ignored
          * @param {Array}  args             Array of arguments, includes the value
          *                                  the for method parameter
          * @returns {*}
@@ -215,7 +215,7 @@
                 instance = $element.data(scopeName + name);
             if (instance instanceof pluginClass) {
                 if (typeof method == "string" && typeof instance[method] == "function") {
-                    return instance[method].apply(instance, _toConsumableArray(args.slice(1)));
+                    return instance[method].apply(instance, _toConsumableArray(args));
                 } else {
                     throw new jQueryPluginCreatorError(method + " is not a member of " + element);
                 }
@@ -232,22 +232,22 @@
         /**
          * TODO: Document
          *
-         * @param {*} data
+         * @param {string|object} stringOrObject
          * @returns {jQuery|*}
          */
-        _jquery2.default.fn[name] = function (data) {
+        _jquery2.default.fn[name] = function (stringOrObject) {
             var args = _jquery2.default.makeArray(arguments),
                 result = this;
             if (this.length === 1) {
-                result = processPluginCall(this[0], data, args);
+                result = processPluginCall(this[0], stringOrObject, args.slice(1));
             } else {
-                if (data === "map") {
+                if (stringOrObject === "map") {
                     result = this.map(function () {
                         return processPluginCall(this, args[1], args.slice(2));
                     });
                 } else {
                     result = this.each(function () {
-                        processPluginCall(this, data, args);
+                        processPluginCall(this, stringOrObject, args.slice(1));
                     });
                 }
             }

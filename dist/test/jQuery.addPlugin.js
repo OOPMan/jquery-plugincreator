@@ -170,9 +170,10 @@
 
                 _createClass(testPlugin2, [{
                     key: "init",
-                    value: function init() {
+                    value: function init(arg) {
                         this.initCalled = true;
                         this.testValue = true;
+                        this.argValue = arg;
                     }
                 }, {
                     key: "testFunction1",
@@ -196,11 +197,11 @@
 
             describe("jQuery('#unique').testPlugin2()", function () {
                 it("should instantiate testPlugin2 on #unique", function () {
-                    unique.testPlugin2();
+                    unique.testPlugin2({}, "yes");
                     this.instance = unique.data("jquery-plugincreator-testPlugin2");
                 });
                 it("should make `members` available to the instance via the prototype", function () {
-                    _unit2.default.object(this.instance).hasProperty("testValue", true).function(this.instance.testFunction1).function(this.instance.testFunction2);
+                    _unit2.default.object(this.instance).hasProperty("testValue", true).hasProperty("argValue", "yes").function(this.instance.testFunction1).function(this.instance.testFunction2);
                 });
                 it("should call the `init` member on the instance if it exists", function () {
                     _unit2.default.object(this.instance).hasProperty("initCalled", true);

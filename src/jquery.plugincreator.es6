@@ -103,10 +103,10 @@ export default function addPlugin(pluginClass, defaults={}) {
      * A function to handle the actual process of instantiating a plugin instance or calling a method on
      * a given plugin instance.
      *
-     * @param {Object} element          DOM Element
-     * @param {*}      method           Potential a string, otherwise ignored
-     * @param {Array}  args             Array of arguments, includes the value
-     *                                  the for method parameter
+     * @param {object}        element          DOM Element
+     * @param {string|object} method           Potentially a string, otherwise ignored
+     * @param {Array}         args             Array of arguments, includes the value
+     *                                         the for method parameter
      * @returns {*}
      */
     function processPluginCall(element, method, args) {
@@ -114,12 +114,13 @@ export default function addPlugin(pluginClass, defaults={}) {
             instance = $element.data(scopeName + name);
         if (instance instanceof pluginClass) {
             if (typeof method == "string" && typeof instance[method] == "function") {
-                return instance[method](...args.slice(1));
+                return instance[method](...args);
             } else {
                 throw new jQueryPluginCreatorError(`${method} is not a member of ${element}`);
             }
         } else if (typeof instance === "undefined") {
-            let newInstance = new pluginClass(element, defaults, method);
+            let options = typeof method == "object" ? method : {},
+                newInstance = new pluginClass(element, defaults, options);
             newInstance.init(...args);
             $element.data(scopeName + name, newInstance);
             return newInstance;
@@ -131,22 +132,22 @@ export default function addPlugin(pluginClass, defaults={}) {
     /**
      * TODO: Document
      *
-     * @param {*} data
+     * @param {string|object} stringOrObject
      * @returns {jQuery|*}
      */
-    $.fn[name] = function (data) {
+    $.fn[name] = function (stringOrObject) {
         var args = $.makeArray(arguments),
             result = this;
         if (this.length === 1) {
-            result = processPluginCall(this[0], data, args);
+            result = processPluginCall(this[0], stringOrObject, args.slice(1));
         } else {
-            if (data === "map") {
+            if (stringOrObject === "map") {
                 result = this.map(function () {
                     return processPluginCall(this, args[1], args.slice(2));
                 });
             } else {
                 result = this.each(function () {
-                    processPluginCall(this, data, args);
+                    processPluginCall(this, stringOrObject, args.slice(1));
                 });
             }
         }

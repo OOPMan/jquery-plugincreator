@@ -88,9 +88,10 @@ describe("jQuery.addPlugin", function () {
 
     describe("jQuery.addPlugin(testPlugin2)", function () {
         class testPlugin2 extends jQuery.addPlugin.jQueryPlugin {
-            init() {
+            init(arg) {
                 this.initCalled = true;
                 this.testValue = true;
+                this.argValue = arg;
             }
             testFunction1() {
                 this.testFunctionResult = true;
@@ -107,12 +108,13 @@ describe("jQuery.addPlugin", function () {
 
         describe("jQuery('#unique').testPlugin2()", function () {
             it("should instantiate testPlugin2 on #unique", function () {
-                unique.testPlugin2();
+                unique.testPlugin2({}, "yes");
                 this.instance = unique.data("jquery-plugincreator-testPlugin2");
             });
             it("should make `members` available to the instance via the prototype", function () {
                 test.object(this.instance)
                         .hasProperty("testValue", true)
+                        .hasProperty("argValue", "yes")
                     .function(this.instance.testFunction1)
                     .function(this.instance.testFunction2);
             });
