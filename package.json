@@ -1,6 +1,6 @@
 {
   "name": "jquery-plugincreator",
-  "version": "v1.0.0",
+  "version": "v1.0.1",
   "description": "A jQuery add-on that makes creating plugins a little easier.",
   "main": "./dist/jquery.plugincreator.js",
   "scripts": {
